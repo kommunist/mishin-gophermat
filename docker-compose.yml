@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16.4
+    environment:
+      POSTGRES_DB: "gophermart"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    hostname: postgres
+    ports:
+      - "5435:5432"
+  gophermart:
+    image: golang:1.22-bookworm
+    depends_on:
+      - postgres
+    environment: 
+      DATABASE_DSN: "postgresql://postgres:postgres@postgres:5432/gophermart"
+
+      GOOSE_DRIVER: "postgres"
+      GOOSE_DBSTRING: "postgresql://postgres:postgres@postgres:5432/gophermart"
+      GOOSE_MIGRATION_DIR: "internal/storage/migrations"
+
+    command: "go run /go/src/gophermart/cmd/gophermart/main.go"
+    volumes:
+      - ~/go/bin:/go/bin
+      - .:/go/src/gophermart
+    working_dir: "/go/src/gophermart"
+    hostname: gophermart
