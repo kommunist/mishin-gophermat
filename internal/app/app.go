@@ -1,19 +1,24 @@
 package app
 
 import (
+	"mishin-gophermat/internal/config"
 	"mishin-gophermat/internal/handlers/registration"
+	"mishin-gophermat/internal/storage"
 	"net/http"
 )
 
 type App struct {
-	db     string
-	config string
+	db     storage.DB
+	config config.MainConfig
 }
 
 func MakeApp() App {
+	c := config.MakeConfig()
+	c.InitConfig()
+	db := storage.MakeDB(c.DatabaseDSN)
 	return App{
-		db:     "here will be db",
-		config: "here will be config",
+		db:     db,
+		config: c,
 	}
 }
 
