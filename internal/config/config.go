@@ -41,4 +41,5 @@ func (c *MainConfig) Parse() {
 	if e := os.Getenv("DATABASE_URI"); e != "" {
 		c.DatabaseURI = e
 	}
+	slog.Info("env parsed")
 }
