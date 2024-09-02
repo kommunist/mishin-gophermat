@@ -8,8 +8,8 @@ import (
 )
 
 type App struct {
-	db     storage.DB
-	config config.MainConfig
+	DB     storage.DB
+	Config config.MainConfig
 }
 
 func MakeApp() App {
@@ -17,13 +17,13 @@ func MakeApp() App {
 	c.InitConfig()
 	db := storage.MakeDB(c.DatabaseURI)
 	return App{
-		db:     db,
-		config: c,
+		DB:     db,
+		Config: c,
 	}
 }
 
 func (h *App) Registration(w http.ResponseWriter, r *http.Request) {
-	registration.Process(w, r, h.db)
+	registration.Process(w, r, h.DB)
 }
 
 func ErrorResponse(w *http.ResponseWriter) {
