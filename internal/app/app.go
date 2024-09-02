@@ -15,7 +15,7 @@ type App struct {
 func MakeApp() App {
 	c := config.MakeConfig()
 	c.InitConfig()
-	db := storage.MakeDB(c.DatabaseDSN)
+	db := storage.MakeDB(c.DatabaseURI)
 	return App{
 		db:     db,
 		config: c,
