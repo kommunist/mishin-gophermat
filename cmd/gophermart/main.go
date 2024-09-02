@@ -14,7 +14,7 @@ func main() {
 	app := app.MakeApp()
 
 	r := chi.NewRouter()
-	r.Post("/", app.Registration)
+	r.Post("/api/user/register", app.Registration)
 
 	slog.Info("Start server on")
 	err := http.ListenAndServe("0.0.0.0:8080", r)
