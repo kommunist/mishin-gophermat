@@ -21,7 +21,7 @@ func MakeConfig() MainConfig {
 }
 
 func (c *MainConfig) InitConfig() {
-	c.InitFlags()
+	// c.InitFlags()
 	c.Parse()
 }
 
