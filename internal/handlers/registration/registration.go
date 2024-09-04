@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"mishin-gophermat/internal/auth"
 	"mishin-gophermat/internal/storage"
 	"net/http"
 )
@@ -35,5 +36,18 @@ func Process(w http.ResponseWriter, r *http.Request, db storage.DB) {
 	if err != nil {
 		slog.Error("Error when insert user")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
+	encrypted := auth.Encrypt(map[string]interface{}{"login": rs.Login})
+	newCookie := newAuthCookie(encrypted)
+	http.SetCookie(w, &newCookie)
+	w.Header().Set("Authorization", "BEARER "+encrypted)
+}
+
+func newAuthCookie(value string) http.Cookie {
+	return http.Cookie{
+		Name:  "jwt",
+		Value: value,
+		Path:  "/",
 	}
 }
