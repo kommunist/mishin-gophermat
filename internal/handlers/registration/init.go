@@ -5,15 +5,15 @@ import (
 	"mishin-gophermat/internal/config"
 )
 
-type abstrStorage interface {
+type AbstrStorage interface {
 	CreateUser(ctx context.Context, login string, password string) error
 }
 
 type RegistrationHandler struct {
-	DB     abstrStorage
+	DB     AbstrStorage
 	Config config.MainConfig
 }
 
-func InitHandler(c config.MainConfig, db abstrStorage) RegistrationHandler {
+func InitHandler(c config.MainConfig, db AbstrStorage) RegistrationHandler {
 	return RegistrationHandler{DB: db, Config: c}
 }
