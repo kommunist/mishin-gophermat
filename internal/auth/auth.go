@@ -11,6 +11,9 @@ func InitAuth() {
 }
 
 func Encrypt(data map[string]interface{}) string {
+	if tokenAuth == nil {
+		InitAuth()
+	}
 	_, tokenString, _ := tokenAuth.Encode(data)
 
 	return tokenString

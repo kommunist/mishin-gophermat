@@ -5,7 +5,6 @@ import (
 	"io"
 	"log/slog"
 	"mishin-gophermat/internal/auth"
-	"mishin-gophermat/internal/storage"
 	"net/http"
 )
 
@@ -14,7 +13,7 @@ type requestItem struct {
 	Password string `json:"password"`
 }
 
-func Process(w http.ResponseWriter, r *http.Request, db storage.DB) {
+func (h *RegistrationHandler) Process(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil { // если body не учитается
 		slog.Error("Error when read body")
@@ -32,7 +31,7 @@ func Process(w http.ResponseWriter, r *http.Request, db storage.DB) {
 		return
 	}
 
-	err = db.CreateUser(r.Context(), rs.Login, rs.Password) // добавить проверку, что существует
+	err = h.DB.CreateUser(r.Context(), rs.Login, rs.Password) // добавить проверку, что существует
 	if err != nil {
 		slog.Error("Error when insert user")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
