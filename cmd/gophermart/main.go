@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"mishin-gophermat/internal/app"
 	"mishin-gophermat/internal/auth"
+	"mishin-gophermat/internal/handlers/registration"
 	"net/http"
 	"os"
 
@@ -24,14 +25,16 @@ var tokenAuth *jwtauth.JWTAuth
 
 func main() {
 
-	app := app.MakeApp()
+	app := app.InitApp()
 	auth.InitAuth()
+
+	regH := registration.InitHandler(app.Config, app.DB)
 
 	r := chi.NewRouter()
 	// r.Use(jwtauth.Verifier(tokenAuth))
 	// r.Use(jwtauth.Authenticator(tokenAuth))
 
-	r.Post("/api/user/register", app.Registration)
+	r.Post("/api/user/register", regH.Process)
 
 	slog.Info("Start server on")
 	err := http.ListenAndServe(app.Config.RunAddress, r)
