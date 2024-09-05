@@ -1,8 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE users(
-  user_id SERIAL PRIMARY KEY,
-  login TEXT UNIQUE NOT NULL,
+  login TEXT PRIMARY KEY,
   password TEXT NOT NULL
 );
 -- +goose StatementEnd

@@ -5,6 +5,7 @@ import (
 	"io"
 	"log/slog"
 	"mishin-gophermat/internal/auth"
+	"mishin-gophermat/internal/errors/exist"
 	"net/http"
 )
 
@@ -32,6 +33,13 @@ func (h *RegistrationHandler) Process(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.DB.CreateUser(r.Context(), rs.Login, rs.Password) // добавить проверку, что существует
+
+	switch err.(type) { // понравился такой синтаксис проверки, так как можно в любой момент его расширять
+	case *exist.ExistError:
+		slog.Info("Login already exist")
+		w.WriteHeader(http.StatusConflict)
+	}
+
 	if err != nil {
 		slog.Error("Error when insert user")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
