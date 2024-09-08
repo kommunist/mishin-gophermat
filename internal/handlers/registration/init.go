@@ -2,7 +2,6 @@ package registration
 
 import (
 	"context"
-	"mishin-gophermat/internal/config"
 )
 
 type AbstrStorage interface {
@@ -10,10 +9,9 @@ type AbstrStorage interface {
 }
 
 type RegistrationHandler struct {
-	DB     AbstrStorage
-	Config config.MainConfig
+	DB AbstrStorage
 }
 
-func InitHandler(c config.MainConfig, db AbstrStorage) RegistrationHandler {
-	return RegistrationHandler{DB: db, Config: c}
+func InitHandler(db AbstrStorage) RegistrationHandler {
+	return RegistrationHandler{DB: db}
 }

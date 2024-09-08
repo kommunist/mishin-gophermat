@@ -3,21 +3,30 @@ package main
 import (
 	"log/slog"
 	"mishin-gophermat/internal/app"
+	"mishin-gophermat/internal/auth"
+	"mishin-gophermat/internal/handlers/orders"
 	"mishin-gophermat/internal/handlers/registration"
 	"net/http"
 	"os"
 
 	chi "github.com/go-chi/chi/v5"
+	jwtauth "github.com/go-chi/jwtauth/v5"
 )
 
 func main() {
 	app := app.InitApp()
+	auth.InitAuth()
 
-	regH := registration.InitHandler(app.Config, app.DB)
+	regH := registration.InitHandler(app.DB)
+	orderH := orders.InitHandler(app.DB)
 
 	r := chi.NewRouter()
-	// r.Use(jwtauth.Verifier(tokenAuth))
-	// r.Use(jwtauth.Authenticator(tokenAuth))
+
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(auth.TokenAuth))
+		r.Use(jwtauth.Authenticator(auth.TokenAuth))
+		r.Post("/api/user/orders", orderH.Process)
+	})
 
 	r.Post("/api/user/register", regH.Process)
 

@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"mishin-gophermat/internal/config"
 	"mishin-gophermat/internal/errors/exist"
 	"net/http"
 	"net/http/httptest"
@@ -18,11 +17,10 @@ import (
 func TestProcess(t *testing.T) {
 	t.Run("create_user_in_db_happy_path_200", func(t *testing.T) {
 		// создали конфиг и стор
-		c := config.MakeConfig()
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
-		h := InitHandler(c, stor)
+		h := InitHandler(stor)
 
 		// подготовили данные для запроса и сам запрос
 		inputJSON, _ := json.Marshal(requestItem{Login: "Login", Password: "Password"})
@@ -58,11 +56,10 @@ func TestProcess(t *testing.T) {
 
 	t.Run("create_user_in_db_incorrect_format_400", func(t *testing.T) {
 		// создали конфиг и стор
-		c := config.MakeConfig()
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
-		h := InitHandler(c, stor)
+		h := InitHandler(stor)
 
 		// подготовили данные для запроса и сам запрос
 		ctx := context.Background()
@@ -88,11 +85,10 @@ func TestProcess(t *testing.T) {
 
 	t.Run("create_user_in_db_already_exist_409", func(t *testing.T) {
 		// создали конфиг и стор
-		c := config.MakeConfig()
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
-		h := InitHandler(c, stor)
+		h := InitHandler(stor)
 
 		// подготовили данные для запроса и сам запрос
 		inputJSON, _ := json.Marshal(requestItem{Login: "Login", Password: "Password"})

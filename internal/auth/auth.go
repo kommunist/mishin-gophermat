@@ -4,17 +4,17 @@ import (
 	jwtauth "github.com/go-chi/jwtauth/v5"
 )
 
-var tokenAuth *jwtauth.JWTAuth
+var TokenAuth *jwtauth.JWTAuth
 
 func InitAuth() {
-	tokenAuth = jwtauth.New("HS256", []byte("secret"), nil) // пока просто слово secret
+	TokenAuth = jwtauth.New("HS256", []byte("secret"), nil) // пока просто слово secret
 }
 
 func Encrypt(data map[string]interface{}) string {
-	if tokenAuth == nil {
+	if TokenAuth == nil {
 		InitAuth()
 	}
-	_, tokenString, _ := tokenAuth.Encode(data)
+	_, tokenString, _ := TokenAuth.Encode(data)
 
 	return tokenString
 }
