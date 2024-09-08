@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"mishin-gophermat/internal/app"
 	"mishin-gophermat/internal/auth"
-	"mishin-gophermat/internal/handlers/orders"
+	"mishin-gophermat/internal/handlers/postorders"
 	"mishin-gophermat/internal/handlers/registration"
 	"net/http"
 	"os"
@@ -18,7 +18,7 @@ func main() {
 	auth.InitAuth()
 
 	regH := registration.InitHandler(app.DB)
-	orderH := orders.InitHandler(app.DB)
+	orderH := postorders.InitHandler(app.DB)
 
 	r := chi.NewRouter()
 

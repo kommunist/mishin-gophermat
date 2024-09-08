@@ -2,7 +2,7 @@
 // Source: mishin-gophermat/internal/handlers/orders (interfaces: AbstrStorage)
 
 // Package orders is a generated GoMock package.
-package orders
+package postorders
 
 import (
 	context "context"

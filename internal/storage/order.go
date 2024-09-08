@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"log/slog"
 	"mishin-gophermat/internal/errors/exist"
@@ -9,12 +10,6 @@ import (
 	"github.com/lib/pq"
 )
 
-<<<<<<< Updated upstream:internal/storage/access.go
-func (db *DB) CreateUser(ctx context.Context, login string, password string) error {
-	_, err := db.driver.ExecContext(ctx,
-		"INSERT INTO users (login, password) VALUES ($1, $2)",
-		login, password,
-=======
 func (db *DB) SelectOrder(ctx context.Context, number string) (map[string]interface{}, error) {
 	var userLogin string
 
@@ -40,27 +35,17 @@ func (db *DB) CreateOrder(ctx context.Context, number string, userLogin string) 
 	_, err := db.driver.ExecContext(ctx,
 		"INSERT INTO orders (number, user_login) VALUES ($1, $2)",
 		number, userLogin,
->>>>>>> Stashed changes:internal/storage/order.go
 	)
 
 	var pqErr *pq.Error
 
 	if errors.As(err, &pqErr) && pqErr.Code.Name() == "unique_violation" {
-<<<<<<< Updated upstream:internal/storage/access.go
-		slog.Info("User not uniq login", "login", login)
-		return exist.NewExistError(err)
-	}
-
-	if err != nil { // необходимо добавит обработку ситуации, когда пользователь уже есть
-		slog.Error("Error when create user", "err", err)
-=======
 		slog.Info("Order not uniq", "number", number)
 		return exist.NewExistError(err)
 	}
 
 	if err != nil {
 		slog.Error("Error when create order", "err", err)
->>>>>>> Stashed changes:internal/storage/order.go
 		return err
 	}
 
