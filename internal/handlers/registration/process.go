@@ -48,6 +48,7 @@ func (h *RegistrationHandler) Process(w http.ResponseWriter, r *http.Request) {
 	encrypted := auth.Encrypt(map[string]interface{}{"login": rs.Login})
 	newCookie := newAuthCookie(encrypted)
 	http.SetCookie(w, &newCookie)
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Authorization", "BEARER "+encrypted)
 }
 
