@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func (h *OrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
+func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 	var currUser string
 
 	_, claims, _ := h.GetLogin(r.Context())
@@ -35,7 +35,7 @@ func (h *OrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderData, err := h.DB.SelectOrder(r.Context(), string(body))
+	orderData, err := h.DB.SelectOrderByNumber(r.Context(), string(body))
 
 	if err != nil {
 		slog.Error("Error when find data in db")

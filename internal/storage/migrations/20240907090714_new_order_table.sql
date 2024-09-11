@@ -5,7 +5,7 @@ CREATE TABLE orders(
   status TEXT default 'NEW',
   accrual INTEGER default 0,
   user_login TEXT,
-  updated_at TIMESTAMP DEFAULT now()
+  uploaded_at TIMESTAMP DEFAULT now()
 );
 -- +goose StatementEnd
 

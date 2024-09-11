@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"mishin-gophermat/internal/app"
 	"mishin-gophermat/internal/auth"
+	"mishin-gophermat/internal/handlers/listorders"
 	"mishin-gophermat/internal/handlers/postorders"
 	"mishin-gophermat/internal/handlers/registration"
 	"net/http"
@@ -18,14 +19,16 @@ func main() {
 	auth.InitAuth()
 
 	regH := registration.InitHandler(app.DB)
-	orderH := postorders.InitHandler(app.DB)
+	poH := postorders.InitHandler(app.DB)
+	loH := listorders.InitHandler(app.DB)
 
 	r := chi.NewRouter()
 
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(auth.TokenAuth))
 		r.Use(jwtauth.Authenticator(auth.TokenAuth))
-		r.Post("/api/user/orders", orderH.Process)
+		r.Post("/api/user/orders", poH.Process)
+		r.Get("/api/user/orders", loH.Process)
 	})
 
 	r.Post("/api/user/register", regH.Process)

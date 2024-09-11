@@ -37,7 +37,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrder(ctx, "98265820")
+		stor.EXPECT().SelectOrderByNumber(ctx, "98265820")
 		// ожидаем, что в базе будет создан заказ
 		stor.EXPECT().CreateOrder(ctx, "98265820", "lenin")
 
@@ -69,7 +69,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrder(ctx, "98265820").Return(
+		stor.EXPECT().SelectOrderByNumber(ctx, "98265820").Return(
 			map[string]interface{}{"userLogin": "lenin"}, nil,
 		)
 
@@ -101,7 +101,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrder(ctx, "98265820").Return(
+		stor.EXPECT().SelectOrderByNumber(ctx, "98265820").Return(
 			map[string]interface{}{"userLogin": "bronstein"}, nil,
 		)
 
@@ -134,7 +134,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrder(ctx, "1111").Times(0)
+		stor.EXPECT().SelectOrderByNumber(ctx, "1111").Times(0)
 		// ожидаем, что в базе будет создан заказ
 		stor.EXPECT().CreateOrder(ctx, "1111", "lenin").Times(0)
 
@@ -167,7 +167,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrder(ctx, "98265820").Times(0)
+		stor.EXPECT().SelectOrderByNumber(ctx, "98265820").Times(0)
 		// ожидаем, что в базе будет создан заказ
 		stor.EXPECT().CreateOrder(ctx, "98265820", "lenin").Times(0)
 
