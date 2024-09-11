@@ -35,14 +35,10 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 	r := make([]map[string]interface{}, 0)
 	var number, status, uploadedAt string
 	var accrual int
-	// to_char(uploaded_at, 'YYYY-MM-DD"T"HH:MI:SSOF'),
 
 	rows, err := db.driver.QueryContext(
 		ctx,
-		`SELECT number, 
-		        status,
-				uploaded_at, 
-				accrual 
+		`SELECT number, status, uploaded_at, accrual 
 		FROM orders where user_login = $1 limit 1`,
 		login,
 	)
