@@ -1,4 +1,4 @@
-package orders
+package postorders
 
 import (
 	"context"
@@ -8,19 +8,19 @@ import (
 )
 
 type AbstrStorage interface {
-	SelectOrder(ctx context.Context, numer string) (data map[string]interface{}, err error)
+	SelectOrderByNumber(ctx context.Context, numer string) (data map[string]interface{}, err error)
 	CreateOrder(ctx context.Context, number string, userLogin string) error
 }
 
-type OrdersHandler struct {
+type PostOrdersHandler struct {
 	DB AbstrStorage
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
 	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
 }
 
-func InitHandler(db AbstrStorage) OrdersHandler {
-	return OrdersHandler{
+func InitHandler(db AbstrStorage) PostOrdersHandler {
+	return PostOrdersHandler{
 		DB:       db,
 		GetLogin: jwtauth.FromContext,
 	}

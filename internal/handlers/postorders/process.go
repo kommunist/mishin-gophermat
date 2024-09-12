@@ -1,14 +1,13 @@
-package orders
+package postorders
 
 import (
-	"fmt"
 	"io"
 	"log/slog"
 	"mishin-gophermat/internal/luhn"
 	"net/http"
 )
 
-func (h *OrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
+func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 	var currUser string
 
 	_, claims, _ := h.GetLogin(r.Context())
@@ -35,7 +34,7 @@ func (h *OrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderData, err := h.DB.SelectOrder(r.Context(), string(body))
+	orderData, err := h.DB.SelectOrderByNumber(r.Context(), string(body))
 
 	if err != nil {
 		slog.Error("Error when find data in db")
@@ -49,16 +48,17 @@ func (h *OrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusConflict)
 		} else { // 200 StatusOK
 			slog.Info("Order already upload by this user")
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 		}
 	} else { // если заказа нет
-		fmt.Println(currUser)
 		err = h.DB.CreateOrder(r.Context(), string(body), currUser)
 		if err != nil {
 			slog.Error("Error when create data in db")
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted) // 202 Accepted
 	}
 

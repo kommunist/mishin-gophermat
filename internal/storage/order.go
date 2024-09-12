@@ -10,28 +10,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func (db *DB) CreateUser(ctx context.Context, login string, password string) error {
-	_, err := db.driver.ExecContext(ctx,
-		"INSERT INTO users (login, password) VALUES ($1, $2)",
-		login, password,
-	)
-
-	var pqErr *pq.Error
-
-	if errors.As(err, &pqErr) && pqErr.Code.Name() == "unique_violation" {
-		slog.Info("User not uniq login", "login", login)
-		return exist.NewExistError(err)
-	}
-
-	if err != nil {
-		slog.Error("Error when create user", "err", err)
-		return err
-	}
-
-	return nil
-}
-
-func (db *DB) SelectOrder(ctx context.Context, number string) (map[string]interface{}, error) {
+func (db *DB) SelectOrderByNumber(ctx context.Context, number string) (map[string]interface{}, error) {
 	var userLogin string
 
 	r := make(map[string]interface{})
@@ -49,6 +28,41 @@ func (db *DB) SelectOrder(ctx context.Context, number string) (map[string]interf
 
 	r["userLogin"] = userLogin
 
+	return r, nil
+}
+
+func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[string]interface{}, error) {
+	r := make([]map[string]interface{}, 0)
+	var number, status, uploadedAt string
+	var accrual int
+
+	rows, err := db.driver.QueryContext(
+		ctx,
+		`SELECT number, status, uploaded_at, accrual 
+		FROM orders where user_login = $1 limit 1`,
+		login,
+	)
+	if err != nil {
+		slog.Info("Error when get data from pg", "err", err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&number, &status, &uploadedAt, &accrual)
+		if err != nil {
+			slog.Error("Error when scan data from result")
+			return nil, err
+		}
+		r = append(
+			r,
+			map[string]interface{}{
+				"number":     number,
+				"status":     status,
+				"uploadedAt": uploadedAt,
+				"accrual":    accrual,
+			},
+		)
+	}
 	return r, nil
 }
 
