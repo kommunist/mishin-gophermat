@@ -26,3 +26,15 @@ services:
       - ~/go/bin:/go/bin
       - .:/go/src/gophermart
     working_dir: "/go/src/gophermart"
+  accrual:
+    image: ubuntu:20.04
+    # depends_on:
+    #   - postgres
+    environment:
+      RUN_ADDRESS: "0.0.0.0:8080"
+      DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/accrual?sslmode=disable"
+    ports:
+      - "8086:8080"
+    volumes:
+      - .:/go/src/gophermart
+    command: "/go/src/gophermart/cmd/accrual/accrual_linux_amd64"
