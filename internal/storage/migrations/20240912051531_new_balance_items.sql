@@ -3,7 +3,8 @@
 CREATE TABLE balance_items(
   id SERIAL PRIMARY KEY,
   value INTEGER,
-  order_id INTEGER
+  order_id INTEGER,
+  withdrawn_id INTEGER
 );
 -- +goose StatementEnd
 
