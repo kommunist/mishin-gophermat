@@ -1,15 +1,14 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE orders(
+CREATE TABLE balance_items(
   id SERIAL PRIMARY KEY,
-  number TEXT UNIQUE,
-  status TEXT default 'NEW',
-  user_login TEXT,
-  uploaded_at TIMESTAMP DEFAULT now()
+  value INTEGER,
+  order_id INTEGER,
+  withdrawn_id INTEGER
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE orders;
+DROP TABLE balance_items;
 -- +goose StatementEnd

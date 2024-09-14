@@ -1,9 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE orders(
+CREATE TABLE withdrawns(
   id SERIAL PRIMARY KEY,
-  number TEXT UNIQUE,
-  status TEXT default 'NEW',
+  number TEXT, -- кажется, что нигде не нужен
   user_login TEXT,
   uploaded_at TIMESTAMP DEFAULT now()
 );
@@ -11,5 +10,5 @@ CREATE TABLE orders(
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE orders;
+DROP TABLE withdrawns;
 -- +goose StatementEnd
