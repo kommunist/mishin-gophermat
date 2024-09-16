@@ -36,7 +36,7 @@ func main() {
 		r.Get("/api/user/orders", loH.Process)
 		r.Get("/api/user/balance", balH.Process)
 		r.Post("/api/user/balance/withdraw", pwithdrawns.Process)
-		r.Get("/api/user/balance/withdraw", lwithdrawns.Process)
+		r.Get("/api/user/withdrawals", lwithdrawns.Process)
 	})
 
 	r.Post("/api/user/register", regH.Process)
