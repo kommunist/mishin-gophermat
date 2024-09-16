@@ -38,8 +38,11 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 
 	rows, err := db.driver.QueryContext(
 		ctx,
-		`SELECT number, status, uploaded_at, accrual 
-		FROM orders where user_login = $1 limit 1`,
+		`
+		SELECT number, status, uploaded_at, balance_items.value
+		FROM orders 
+		LEFT JOIN balance_items on balance_items.order_id = orders.id
+		WHERE orders.user_login = $1 limit 1`,
 		login,
 	)
 	if err != nil {
