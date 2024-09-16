@@ -1,11 +1,11 @@
-package registration
+package login
 
 import (
 	"encoding/json"
 	"io"
 	"log/slog"
 	"mishin-gophermat/internal/auth"
-	"mishin-gophermat/internal/errors/exist"
+	"mishin-gophermat/internal/errors/notfound"
 	"net/http"
 )
 
@@ -14,7 +14,7 @@ type requestItem struct {
 	Password string `json:"password"`
 }
 
-func (h *RegistrationHandler) Process(w http.ResponseWriter, r *http.Request) {
+func (h *LoginHandler) Process(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil { // если body не учитается
 		slog.Error("Error when read body", "err", err)
@@ -28,20 +28,21 @@ func (h *RegistrationHandler) Process(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &rs)
 	if err != nil || rs.Login == "" || rs.Password == "" { // если запрос не того формата
 		slog.Error("Invalid format", "err", err)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest) // 400
 		return
 	}
 
-	err = h.DB.CreateUser(r.Context(), rs.Login, rs.Password)
+	err = h.DB.SelectUser(r.Context(), rs.Login, rs.Password)
 
 	switch err.(type) { // понравился такой синтаксис проверки, так как можно в любой момент его расширять
-	case *exist.ExistError:
-		slog.Info("Login already exist")
-		w.WriteHeader(http.StatusConflict)
+	case *notfound.NotFoundError:
+		slog.Info("User not found")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
 	}
 
 	if err != nil {
-		slog.Error("Error when insert user", "err", err)
+		slog.Error("Error select user", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 
