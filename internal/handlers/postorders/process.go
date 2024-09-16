@@ -20,7 +20,7 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil { // если body не читается
-		slog.Error("Error when read body")
+		slog.Error("Error when read body", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -29,7 +29,7 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 	valid, err := luhn.Valid(body)
 	slog.Info("Luhn valid", "valid", valid, "body", string(body))
 	if err != nil || !valid { // Если не удалось проверить на подлинность, то 422
-		slog.Error("Error when valid body")
+		slog.Error("Error when valid body", "err", err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
@@ -37,14 +37,14 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 	orderData, err := h.DB.SelectOrderByNumber(r.Context(), string(body))
 
 	if err != nil {
-		slog.Error("Error when find data in db")
+		slog.Error("Error when find data in db", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	if orderData != nil { // если заказ есть
 		if orderData["userLogin"] != currUser { // 409 StatusConflict
-			slog.Error("Order already upload by another user")
+			slog.Error("Order already upload by another user", "err", err)
 			w.WriteHeader(http.StatusConflict)
 		} else { // 200 StatusOK
 			slog.Info("Order already upload by this user")
@@ -54,7 +54,7 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 	} else { // если заказа нет
 		err = h.DB.CreateOrder(r.Context(), string(body), currUser)
 		if err != nil {
-			slog.Error("Error when create data in db")
+			slog.Error("Error when create data in db", "err", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
