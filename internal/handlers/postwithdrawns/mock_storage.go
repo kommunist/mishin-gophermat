@@ -35,7 +35,7 @@ func (m *MockAbstrStorage) EXPECT() *MockAbstrStorageMockRecorder {
 }
 
 // CreateWithdrawn mocks base method.
-func (m *MockAbstrStorage) CreateWithdrawn(arg0 context.Context, arg1, arg2 string, arg3 int) error {
+func (m *MockAbstrStorage) CreateWithdrawn(arg0 context.Context, arg1, arg2 string, arg3 float64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateWithdrawn", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
@@ -49,11 +49,11 @@ func (mr *MockAbstrStorageMockRecorder) CreateWithdrawn(arg0, arg1, arg2, arg3 i
 }
 
 // SelectBalanceByLogin mocks base method.
-func (m *MockAbstrStorage) SelectBalanceByLogin(arg0 context.Context, arg1 string) (int, int, error) {
+func (m *MockAbstrStorage) SelectBalanceByLogin(arg0 context.Context, arg1 string) (float64, float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectBalanceByLogin", arg0, arg1)
-	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(int)
+	ret0, _ := ret[0].(float64)
+	ret1, _ := ret[1].(float64)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }

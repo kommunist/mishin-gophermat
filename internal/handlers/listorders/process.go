@@ -7,10 +7,10 @@ import (
 )
 
 type responseItem struct {
-	Number     string `json:"number"`
-	Status     string `json:"status"`
-	Accrual    int    `json:"accrual"`
-	UploadedAt string `json:"uploaded_at"`
+	Number     string  `json:"number"`
+	Status     string  `json:"status"`
+	Accrual    float64 `json:"accrual"`
+	UploadedAt string  `json:"uploaded_at"`
 }
 
 func (h *ListOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +42,7 @@ func (h *ListOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 			responseItem{
 				Number:     v["number"].(string),
 				Status:     v["status"].(string),
-				Accrual:    v["accrual"].(int),
+				Accrual:    v["accrual"].(float64),
 				UploadedAt: v["uploadedAt"].(string),
 			},
 		)

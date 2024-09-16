@@ -8,7 +8,7 @@ import (
 )
 
 type AbstrStorage interface {
-	SelectBalanceByLogin(ctx context.Context, login string) (int, int, error)
+	SelectBalanceByLogin(ctx context.Context, login string) (float64, float64, error)
 }
 
 type BalanceHandler struct {

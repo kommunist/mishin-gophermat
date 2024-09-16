@@ -35,7 +35,7 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 	r := make([]map[string]interface{}, 0)
 	var number, status, uploadedAt string
 	var checkAccrual interface{}
-	var accrual int
+	var accrual float64
 
 	rows, err := db.driver.QueryContext(
 		ctx,
@@ -57,7 +57,7 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 			return nil, err
 		}
 		if checkAccrual != nil {
-			accrual = int(checkAccrual.(int64))
+			accrual = checkAccrual.(float64)
 		}
 		r = append(
 			r,

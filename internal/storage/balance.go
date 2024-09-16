@@ -5,11 +5,11 @@ import (
 	"log/slog"
 )
 
-func (db *DB) SelectBalanceByLogin(ctx context.Context, login string) (int, int, error) { // current, withdrawn
+func (db *DB) SelectBalanceByLogin(ctx context.Context, login string) (float64, float64, error) { // current, withdrawn
 	var checkDebit interface{}
 	var checkCredit interface{}
-	var debit int
-	var credit int
+	var debit float64
+	var credit float64
 
 	row := db.driver.QueryRowContext(
 		ctx,
@@ -17,7 +17,7 @@ func (db *DB) SelectBalanceByLogin(ctx context.Context, login string) (int, int,
 	)
 	err := row.Scan(&checkDebit)
 	if checkDebit != nil {
-		debit = int(checkDebit.(int64))
+		debit = checkDebit.(float64)
 	}
 	if err != nil {
 		slog.Info("error when scan data for debit", "err", err)
@@ -30,12 +30,12 @@ func (db *DB) SelectBalanceByLogin(ctx context.Context, login string) (int, int,
 	)
 	err = row.Scan(&checkCredit)
 	if checkCredit != nil {
-		credit = int(checkCredit.(int64))
+		credit = checkCredit.(float64)
 	}
 	if err != nil {
 		slog.Info("error when scan data for credit", "err", err)
 		return 0, 0, err
 	}
 
-	return debit - credit, int(credit), nil
+	return debit - credit, credit, nil
 }

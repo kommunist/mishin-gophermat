@@ -8,8 +8,8 @@ import (
 )
 
 type request struct {
-	Number string `json:"order"`
-	Value  int    `json:"sum"`
+	Number string  `json:"order"`
+	Value  float64 `json:"sum"`
 }
 
 // не стал реализовывать кейс с неправильным номером заказа

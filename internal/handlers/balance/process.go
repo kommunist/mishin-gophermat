@@ -7,8 +7,8 @@ import (
 )
 
 type response struct {
-	Current   int `json:"current"`
-	Withdrawn int `json:"withdrawn"`
+	Current   float64 `json:"current"`
+	Withdrawn float64 `json:"withdrawn"`
 }
 
 func (h *BalanceHandler) Process(w http.ResponseWriter, r *http.Request) {

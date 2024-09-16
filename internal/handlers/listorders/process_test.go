@@ -37,7 +37,7 @@ func TestProcess(t *testing.T) {
 				{
 					"number":     "123",
 					"status":     "NEW",
-					"accrual":    500,
+					"accrual":    500.0,
 					"uploadedAt": "2021",
 				},
 			}, nil,

@@ -36,7 +36,7 @@ func TestProcess(t *testing.T) {
 			[]map[string]interface{}{
 				{
 					"number":      "number",
-					"value":       500,
+					"value":       500.0,
 					"processedAt": "2021",
 				},
 			}, nil,

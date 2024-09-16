@@ -4,7 +4,7 @@ CREATE TABLE orders(
   id SERIAL PRIMARY KEY,
   number TEXT UNIQUE,
   status TEXT default 'NEW',
-  value INTEGER default 0,
+  value REAL default 0,
   user_login TEXT,
   uploaded_at TIMESTAMP DEFAULT now()
 );

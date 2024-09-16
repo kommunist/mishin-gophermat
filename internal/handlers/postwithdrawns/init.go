@@ -8,8 +8,8 @@ import (
 )
 
 type AbstrStorage interface {
-	CreateWithdrawn(ctx context.Context, userLogin string, number string, value int) error
-	SelectBalanceByLogin(ctx context.Context, login string) (int, int, error)
+	CreateWithdrawn(ctx context.Context, userLogin string, number string, value float64) error
+	SelectBalanceByLogin(ctx context.Context, login string) (float64, float64, error)
 }
 
 type PostWithdrawsHandler struct {

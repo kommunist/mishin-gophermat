@@ -35,7 +35,7 @@ func TestProcess(t *testing.T) {
 
 		// ожидаем, что в базу будет такой поход для поиска
 		stor.EXPECT().SelectBalanceByLogin(ctx, "lenin").Return(
-			500, 60, nil,
+			500.0, 60.0, nil,
 		)
 
 		// Делаем запрос
@@ -48,8 +48,8 @@ func TestProcess(t *testing.T) {
 		resp := response{}
 		json.Unmarshal(body, &resp)
 
-		assert.Equal(t, 500, resp.Current)
-		assert.Equal(t, 60, resp.Withdrawn)
+		assert.Equal(t, 500.0, resp.Current)
+		assert.Equal(t, 60.0, resp.Withdrawn)
 
 		// Проверяем статус ответа
 		assert.Equal(t, http.StatusOK, res.StatusCode) // 200

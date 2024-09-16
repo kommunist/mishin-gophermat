@@ -7,9 +7,9 @@ import (
 )
 
 type responseItem struct {
-	Number      string `json:"order"`
-	Value       int    `json:"sum"`
-	ProcessedAt string `json:"processed_at"`
+	Number      string  `json:"order"`
+	Value       float64 `json:"sum"`
+	ProcessedAt string  `json:"processed_at"`
 }
 
 func (h *ListWithdrawns) Process(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +40,7 @@ func (h *ListWithdrawns) Process(w http.ResponseWriter, r *http.Request) {
 			resp,
 			responseItem{
 				Number:      v["number"].(string),
-				Value:       v["value"].(int),
+				Value:       v["value"].(float64),
 				ProcessedAt: v["processedAt"].(string),
 			},
 		)

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 )
 
-func (db *DB) CreateWithdrawn(ctx context.Context, userLogin string, number string, value int) error {
+func (db *DB) CreateWithdrawn(ctx context.Context, userLogin string, number string, value float64) error {
 	_, err := db.driver.ExecContext(ctx,
 		"INSERT INTO withdrawns (number, user_login, value) VALUES ($1, $2, $3) RETURNING ID",
 		number, userLogin, value,
@@ -22,7 +22,7 @@ func (db *DB) CreateWithdrawn(ctx context.Context, userLogin string, number stri
 func (db *DB) SelectWithdrawnsByLogin(ctx context.Context, login string) ([]map[string]interface{}, error) {
 	r := make([]map[string]interface{}, 0)
 	var number, processedAt string
-	var value int
+	var value float64
 
 	rows, err := db.driver.QueryContext(
 		ctx,
