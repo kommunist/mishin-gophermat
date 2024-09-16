@@ -6,6 +6,7 @@ import (
 	"mishin-gophermat/internal/auth"
 	"mishin-gophermat/internal/handlers/balance"
 	"mishin-gophermat/internal/handlers/listorders"
+	"mishin-gophermat/internal/handlers/listwithdrawns"
 	"mishin-gophermat/internal/handlers/postorders"
 	"mishin-gophermat/internal/handlers/postwithdrawns"
 	"mishin-gophermat/internal/handlers/registration"
@@ -24,6 +25,7 @@ func main() {
 	loH := listorders.InitHandler(app.DB)
 	balH := balance.InitHandler(app.DB)
 	pwithdrawns := postwithdrawns.InitHandler(app.DB)
+	lwithdrawns := listwithdrawns.InitHandler(app.DB)
 
 	r := chi.NewRouter()
 
@@ -34,6 +36,7 @@ func main() {
 		r.Get("/api/user/orders", loH.Process)
 		r.Get("/api/user/balance", balH.Process)
 		r.Post("/api/user/balance/withdraw", pwithdrawns.Process)
+		r.Get("/api/user/balance/withdraw", lwithdrawns.Process)
 	})
 
 	r.Post("/api/user/register", regH.Process)
