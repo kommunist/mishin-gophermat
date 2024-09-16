@@ -6,35 +6,36 @@ import (
 )
 
 func (db *DB) SelectBalanceByLogin(ctx context.Context, login string) (int, int, error) { // current, withdrawn
-	var current interface{}
-	realCurrent := 0
-	var withdrawn interface{}
-	realWithdrawn := 0
+	var checkDebit interface{}
+	var checkCredit interface{}
+	var debit int
+	var credit int
 
 	row := db.driver.QueryRowContext(
 		ctx,
-		`
-		SELECT 
-		SUM(CASE WHEN bi.withdrawn_id is not null THEN bi.value * -1 ELSE bi.value END) AS current,
-		SUM(CASE WHEN bi.withdrawn_id is not null THEN bi.value ELSE 0 END) AS withdrawn
-		FROM balance_items bi
-		INNER JOIN orders ON bi.order_id = orders.id
-		INNER JOIN withdrawns ON bi.withdrawn_id = withdrawns.id
-		WHERE orders.user_login = $1 or withdrawns.user_login = $1
-		`, login,
+		"SELECT sum(orders.value) FROM orders WHERE user_login = $1", login,
 	)
-	err := row.Scan(&current, &withdrawn)
-	if current != nil {
-		realCurrent = current.(int)
+	err := row.Scan(&checkDebit)
+	if checkDebit != nil {
+		debit = int(checkDebit.(int64))
 	}
-	if withdrawn != nil {
-		realWithdrawn = withdrawn.(int)
-	}
-
 	if err != nil {
-		slog.Info("error when scan data", "err", err)
+		slog.Info("error when scan data for debit", "err", err)
 		return 0, 0, err
 	}
 
-	return realCurrent, realWithdrawn, nil
+	row = db.driver.QueryRowContext(
+		ctx,
+		"SELECT sum(withdrawns.value) FROM withdrawns WHERE user_login = $1", login,
+	)
+	err = row.Scan(&checkCredit)
+	if checkCredit != nil {
+		credit = int(checkCredit.(int64))
+	}
+	if err != nil {
+		slog.Info("error when scan data for credit", "err", err)
+		return 0, 0, err
+	}
+
+	return debit - credit, int(credit), nil
 }

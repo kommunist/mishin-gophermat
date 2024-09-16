@@ -34,14 +34,14 @@ func (db *DB) SelectOrderByNumber(ctx context.Context, number string) (map[strin
 func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[string]interface{}, error) {
 	r := make([]map[string]interface{}, 0)
 	var number, status, uploadedAt string
-	var accrual interface{}
+	var checkAccrual interface{}
+	var accrual int
 
 	rows, err := db.driver.QueryContext(
 		ctx,
 		`
-		SELECT number, status, uploaded_at, balance_items.value 
+		SELECT number, status, uploaded_at, value 
 		FROM orders 
-		LEFT JOIN balance_items on balance_items.order_id = orders.id
 		WHERE orders.user_login = $1 limit 1`,
 		login,
 	)
@@ -51,14 +51,13 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&number, &status, &uploadedAt, &accrual)
+		err = rows.Scan(&number, &status, &uploadedAt, &checkAccrual)
 		if err != nil {
 			slog.Error("Error when scan data from result", "err", err)
 			return nil, err
 		}
-		realAccrual := 0
-		if accrual != nil {
-			realAccrual = accrual.(int)
+		if checkAccrual != nil {
+			accrual = int(checkAccrual.(int64))
 		}
 		r = append(
 			r,
@@ -66,7 +65,7 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 				"number":     number,
 				"status":     status,
 				"uploadedAt": uploadedAt,
-				"accrual":    realAccrual,
+				"accrual":    accrual,
 			},
 		)
 	}
