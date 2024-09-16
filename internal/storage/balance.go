@@ -21,7 +21,7 @@ func (db *DB) SelectBalanceByLogin(ctx context.Context, login string) (float64, 
 	}
 	if err != nil {
 		slog.Info("error when scan data for debit", "err", err)
-		return 0, 0, err
+		return 0.0, 0.0, err
 	}
 
 	row = db.driver.QueryRowContext(
@@ -34,8 +34,9 @@ func (db *DB) SelectBalanceByLogin(ctx context.Context, login string) (float64, 
 	}
 	if err != nil {
 		slog.Info("error when scan data for credit", "err", err)
-		return 0, 0, err
+		return 0.0, 0.0, err
 	}
+	slog.Info("data", "debit", debit, "credit", credit)
 
 	return debit - credit, credit, nil
 }
