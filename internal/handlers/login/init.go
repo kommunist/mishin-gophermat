@@ -5,7 +5,7 @@ import (
 )
 
 type AbstrStorage interface {
-	SelectUser(ctx context.Context, login string, password string) error // login, error
+	SelectUser(ctx context.Context, login string, password string) (bool, error) // login, error
 }
 
 type LoginHandler struct {

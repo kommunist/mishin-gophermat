@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
-	"mishin-gophermat/internal/errors/notfound"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,7 +31,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход
-		stor.EXPECT().SelectUser(ctx, "Login", "Password").Return(nil)
+		stor.EXPECT().SelectUser(ctx, "Login", "Password").Return(true, nil)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -102,7 +100,7 @@ func TestProcess(t *testing.T) {
 		// ожидаем, что в базу будет такой поход
 		stor.EXPECT().SelectUser(
 			ctx, "Login", "Password",
-		).Return(notfound.NewNotFoundError(errors.New("qq")))
+		).Return(false, nil)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()

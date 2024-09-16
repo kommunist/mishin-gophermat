@@ -5,7 +5,6 @@ import (
 	"io"
 	"log/slog"
 	"mishin-gophermat/internal/auth"
-	"mishin-gophermat/internal/errors/notfound"
 	"net/http"
 )
 
@@ -32,10 +31,9 @@ func (h *LoginHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.DB.SelectUser(r.Context(), rs.Login, rs.Password)
+	ex, err := h.DB.SelectUser(r.Context(), rs.Login, rs.Password)
 
-	switch err.(type) { // понравился такой синтаксис проверки, так как можно в любой момент его расширять
-	case *notfound.NotFoundError:
+	if !ex {
 		slog.Info("User not found")
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return

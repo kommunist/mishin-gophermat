@@ -35,11 +35,12 @@ func (m *MockAbstrStorage) EXPECT() *MockAbstrStorageMockRecorder {
 }
 
 // SelectUser mocks base method.
-func (m *MockAbstrStorage) SelectUser(arg0 context.Context, arg1, arg2 string) error {
+func (m *MockAbstrStorage) SelectUser(arg0 context.Context, arg1, arg2 string) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectUser", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // SelectUser indicates an expected call of SelectUser.
