@@ -1,9 +1,7 @@
-package balance
+package listwithdrawns
 
 import (
 	"context"
-	"encoding/json"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -31,11 +29,17 @@ func TestProcess(t *testing.T) {
 		//готовим запрос
 		ctx := context.Background()
 		request :=
-			httptest.NewRequest(http.MethodGet, "/api/user/balance", nil).WithContext(ctx)
+			httptest.NewRequest(http.MethodGet, "/api/user/withdrawals", nil).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectBalanceByLogin(ctx, "lenin").Return(
-			500.0, 60.0, nil,
+		stor.EXPECT().SelectWithdrawnsByLogin(ctx, "lenin").Return(
+			[]map[string]interface{}{
+				{
+					"number":      "number",
+					"value":       500.0,
+					"processedAt": "2021",
+				},
+			}, nil,
 		)
 
 		// Делаем запрос
@@ -44,33 +48,52 @@ func TestProcess(t *testing.T) {
 		res := w.Result()
 		defer res.Body.Close()
 
-		body, _ := io.ReadAll(res.Body)
-		resp := response{}
-		json.Unmarshal(body, &resp)
-
-		assert.Equal(t, 500.0, resp.Current)
-		assert.Equal(t, 60.0, resp.Withdrawn)
-
 		// Проверяем статус ответа
 		assert.Equal(t, http.StatusOK, res.StatusCode) // 200
 	})
 
-	t.Run("when_without_authorize_401", func(t *testing.T) {
+	t.Run("when_no_data_204", func(t *testing.T) {
 
 		// создали стор
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
-		// h.GetLogin = GetLoginLenin
+		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
 		ctx := context.Background()
 		request :=
-			httptest.NewRequest(http.MethodGet, "/api/user/balance", nil).WithContext(ctx)
+			httptest.NewRequest(http.MethodGet, "/api/user/withdrawals", nil).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectBalanceByLogin(ctx, "lenin").Times(0)
+		stor.EXPECT().SelectWithdrawnsByLogin(ctx, "lenin").Return(nil, nil)
+
+		// Делаем запрос
+		w := httptest.NewRecorder()
+		h.Process(w, request)
+		res := w.Result()
+		defer res.Body.Close()
+
+		// Проверяем статус ответа
+		assert.Equal(t, http.StatusNoContent, res.StatusCode) // 204
+	})
+
+	t.Run("when_anauthorize_", func(t *testing.T) {
+
+		// создали стор
+		stor := NewMockAbstrStorage(gomock.NewController(t))
+
+		// заинитили хендлер
+		h := InitHandler(stor)
+		// h.GetLogin = GetLoginLenin - специально выключено, чтобы было видно, что не авторизовываем
+
+		//готовим запрос
+		ctx := context.Background()
+		request := httptest.NewRequest(http.MethodGet, "/api/user/withdrawals", nil).WithContext(ctx)
+
+		// ожидаем, что в базу будет такой поход для поиска
+		stor.EXPECT().SelectWithdrawnsByLogin(ctx, "lenin").Times(0)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()

@@ -1,4 +1,4 @@
-package listorders
+package listwithdrawns
 
 import (
 	"encoding/json"
@@ -7,13 +7,12 @@ import (
 )
 
 type responseItem struct {
-	Number     string  `json:"number"`
-	Status     string  `json:"status"`
-	Accrual    float64 `json:"accrual"`
-	UploadedAt string  `json:"uploaded_at"`
+	Number      string  `json:"order"`
+	Value       float64 `json:"sum"`
+	ProcessedAt string  `json:"processed_at"`
 }
 
-func (h *ListOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
+func (h *ListWithdrawns) Process(w http.ResponseWriter, r *http.Request) {
 	var currUser string
 	resp := make([]responseItem, 0)
 
@@ -25,14 +24,14 @@ func (h *ListOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := h.DB.SelectOrdersByLogin(r.Context(), currUser)
-	if err != nil { // 204
+	data, err := h.DB.SelectWithdrawnsByLogin(r.Context(), currUser)
+	if err != nil {
 		slog.Error("Error when get data from db", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 	if len(data) == 0 {
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusNoContent) // 204
 		return
 
 	}
@@ -40,10 +39,9 @@ func (h *ListOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		resp = append(
 			resp,
 			responseItem{
-				Number:     v["number"].(string),
-				Status:     v["status"].(string),
-				Accrual:    v["accrual"].(float64),
-				UploadedAt: v["uploadedAt"].(string),
+				Number:      v["number"].(string),
+				Value:       v["value"].(float64),
+				ProcessedAt: v["processedAt"].(string),
 			},
 		)
 	}

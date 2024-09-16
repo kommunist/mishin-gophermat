@@ -4,7 +4,8 @@ CREATE TABLE withdrawns(
   id SERIAL PRIMARY KEY,
   number TEXT, -- кажется, что нигде не нужен
   user_login TEXT,
-  uploaded_at TIMESTAMP DEFAULT now()
+  value REAL DEFAULT 0,
+  processed_at TIMESTAMP DEFAULT now()
 );
 -- +goose StatementEnd
 

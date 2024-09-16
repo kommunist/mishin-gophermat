@@ -1,4 +1,4 @@
-package balance
+package listwithdrawns
 
 import (
 	"context"
@@ -8,18 +8,18 @@ import (
 )
 
 type AbstrStorage interface {
-	SelectBalanceByLogin(ctx context.Context, login string) (float64, float64, error)
+	SelectWithdrawnsByLogin(ctx context.Context, login string) (data []map[string]interface{}, err error)
 }
 
-type BalanceHandler struct {
+type ListWithdrawns struct {
 	DB AbstrStorage
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
 	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
 }
 
-func InitHandler(db AbstrStorage) BalanceHandler {
-	return BalanceHandler{
+func InitHandler(db AbstrStorage) ListWithdrawns {
+	return ListWithdrawns{
 		DB:       db,
 		GetLogin: jwtauth.FromContext,
 	}

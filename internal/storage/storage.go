@@ -34,7 +34,7 @@ func upMigrations(driver *sql.DB) {
 func MakeDB(dsn string) DB {
 	driver, err := sql.Open("postgres", dsn)
 	if err != nil {
-		slog.Error("Error when open database")
+		slog.Error("Error when open database", "err", err)
 		os.Exit(1)
 	}
 
