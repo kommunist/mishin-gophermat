@@ -7,6 +7,7 @@ import (
 	"mishin-gophermat/internal/handlers/balance"
 	"mishin-gophermat/internal/handlers/listorders"
 	"mishin-gophermat/internal/handlers/listwithdrawns"
+	"mishin-gophermat/internal/handlers/login"
 	"mishin-gophermat/internal/handlers/postorders"
 	"mishin-gophermat/internal/handlers/postwithdrawns"
 	"mishin-gophermat/internal/handlers/registration"
@@ -26,6 +27,7 @@ func main() {
 	balH := balance.InitHandler(app.DB)
 	pwithdrawns := postwithdrawns.InitHandler(app.DB)
 	lwithdrawns := listwithdrawns.InitHandler(app.DB)
+	loginH := login.InitHandler(app.DB)
 
 	r := chi.NewRouter()
 
@@ -40,6 +42,7 @@ func main() {
 	})
 
 	r.Post("/api/user/register", regH.Process)
+	r.Post("/api/user/login", loginH.Process)
 
 	slog.Info("Start server on")
 	err := http.ListenAndServe(app.Config.RunAddress, r)
