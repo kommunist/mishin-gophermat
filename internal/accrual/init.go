@@ -7,9 +7,10 @@ type AbstrStorage interface {
 }
 
 type Accrual struct {
-	DB AbstrStorage
+	DB  AbstrStorage
+	URI string
 }
 
-func InitAccrual(db AbstrStorage) Accrual {
-	return Accrual{DB: db}
+func InitAccrual(db AbstrStorage, URI string) Accrual {
+	return Accrual{DB: db, URI: URI}
 }

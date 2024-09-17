@@ -13,9 +13,9 @@ type response struct {
 	Accrual float64 `json:"accrual"`
 }
 
-func getOrderData(number string) (string, float64, error) { // status, accrual, error
+func (acr *Accrual) getOrderData(number string) (string, float64, error) { // status, accrual, error
 	// req = send_request
-	resp, err := http.Get("/api/orders/" + number)
+	resp, err := http.Get(acr.URI + "/api/orders/" + number)
 	if err != nil {
 		slog.Error("Error when send request to accruals", "err", err)
 		return "", 0, err

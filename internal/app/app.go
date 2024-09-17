@@ -28,6 +28,6 @@ func InitApp() App {
 }
 
 func (app *App) InitAsync() {
-	acr := accrual.InitAccrual(app.DB)
+	acr := accrual.InitAccrual(app.DB, app.Config.AccrualURI)
 	acr.InitWorkers(app.AcrChan)
 }

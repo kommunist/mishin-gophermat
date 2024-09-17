@@ -31,7 +31,7 @@ func (acr *Accrual) slave(inp chan string) {
 // - `PROCESSING` — расчёт начисления в процессе;
 // - `PROCESSED` — расчёт начисления окончен;
 func (acr *Accrual) process(number string) (bool, error) { // repeat?(true/false)
-	status, accrual, err := getOrderData(number)
+	status, accrual, err := acr.getOrderData(number)
 	if err != nil {
 		slog.Error("Error when get data from accrual", "err", err)
 		return false, nil // будем считать, что достаточно того, что написали в логи
