@@ -69,6 +69,12 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 			},
 		)
 	}
+
+	err = rows.Err()
+	if err != nil {
+		slog.Error("Error when iterate over rows", "err", err)
+		return nil, err
+	}
 	return r, nil
 }
 
@@ -87,6 +93,20 @@ func (db *DB) CreateOrder(ctx context.Context, number string, userLogin string) 
 
 	if err != nil {
 		slog.Error("Error when create order", "err", err)
+		return err
+	}
+
+	return nil
+}
+
+func (db *DB) UpdateOrderStatusAndValue(ctx context.Context, number string, status string, value float64) error {
+	_, err := db.driver.ExecContext(ctx,
+		"UPDATE orders SET status = $1, value = $2 WHERE number = $3",
+		status, value, number,
+	)
+
+	if err != nil {
+		slog.Error("Error when update order", "err", err)
 		return err
 	}
 

@@ -52,12 +52,14 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}
 	} else { // если заказа нет
-		err = h.DB.CreateOrder(r.Context(), string(body), currUser)
+		number := string(body)
+		err = h.DB.CreateOrder(r.Context(), number, currUser)
 		if err != nil {
 			slog.Error("Error when create data in db", "err", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
+		h.acrChan <- number
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted) // 202 Accepted
 	}
