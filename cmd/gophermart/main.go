@@ -20,6 +20,7 @@ import (
 
 func main() {
 	app := app.InitApp()
+	app.InitAsync()
 
 	regH := registration.InitHandler(app.DB)
 	poH := postorders.InitHandler(app.DB)
