@@ -95,7 +95,7 @@ func (db *DB) CreateOrder(ctx context.Context, number string, userLogin string) 
 
 func (db *DB) UpdateOrderStatusAndValue(ctx context.Context, number string, status string, value float64) error {
 	_, err := db.driver.ExecContext(ctx,
-		"UPDATE orders SET (status, value) VALUES ($1, $2) where number = $3",
+		"UPDATE orders SET status = $1, value = $2 WHERE number = $3",
 		status, value, number,
 	)
 
