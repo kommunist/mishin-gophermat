@@ -1,7 +1,6 @@
 package app
 
 import (
-	"mishin-gophermat/internal/accrual"
 	"mishin-gophermat/internal/auth"
 	"mishin-gophermat/internal/config"
 	"mishin-gophermat/internal/storage"
@@ -25,9 +24,4 @@ func InitApp() App {
 		DB:      &db,
 		AcrChan: make(chan string, 5),
 	}
-}
-
-func (app *App) InitAsync() {
-	acr := accrual.InitAccrual(app.DB, app.Config.AccrualURI)
-	acr.InitWorkers(app.AcrChan)
 }
