@@ -13,15 +13,18 @@ type AbstrStorage interface {
 }
 
 type PostOrdersHandler struct {
-	DB AbstrStorage
+	DB      AbstrStorage
+	acrChan chan string
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
 	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
 }
 
-func InitHandler(db AbstrStorage) PostOrdersHandler {
+func InitHandler(db AbstrStorage, acrChan chan string) PostOrdersHandler {
 	return PostOrdersHandler{
-		DB:       db,
+		DB:      db,
+		acrChan: acrChan,
+
 		GetLogin: jwtauth.FromContext,
 	}
 }
