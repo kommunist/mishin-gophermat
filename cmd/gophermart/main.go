@@ -7,5 +7,5 @@ import (
 func main() {
 	app := app.InitApp()
 	app.InitAsync()
-	app.StartApi()
+	app.StartAPI()
 }

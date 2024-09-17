@@ -17,7 +17,7 @@ import (
 	jwtauth "github.com/go-chi/jwtauth/v5"
 )
 
-func (app *App) StartApi() {
+func (app *App) StartAPI() {
 	regH := registration.InitHandler(app.DB)
 	poH := postorders.InitHandler(app.DB, app.AcrChan)
 	loH := listorders.InitHandler(app.DB)
