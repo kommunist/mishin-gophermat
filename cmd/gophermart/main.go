@@ -23,7 +23,7 @@ func main() {
 	app.InitAsync()
 
 	regH := registration.InitHandler(app.DB)
-	poH := postorders.InitHandler(app.DB)
+	poH := postorders.InitHandler(app.DB, app.AcrChan)
 	loH := listorders.InitHandler(app.DB)
 	balH := balance.InitHandler(app.DB)
 	pwithdrawns := postwithdrawns.InitHandler(app.DB)

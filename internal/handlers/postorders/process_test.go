@@ -19,12 +19,13 @@ func GetLoginLenin(ctx context.Context) (jwt.Token, map[string]interface{}, erro
 func TestProcess(t *testing.T) {
 
 	t.Run("create_order_202", func(t *testing.T) {
+		acrChan := make(chan string, 5)
 
 		// создали стор
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
-		h := InitHandler(stor)
+		h := InitHandler(stor, acrChan)
 		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
@@ -52,11 +53,12 @@ func TestProcess(t *testing.T) {
 	})
 
 	t.Run("already_exist_order_with_same_author_200", func(t *testing.T) {
+		acrChan := make(chan string, 5)
 		// создали стор
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
-		h := InitHandler(stor)
+		h := InitHandler(stor, acrChan)
 		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
@@ -84,11 +86,12 @@ func TestProcess(t *testing.T) {
 	})
 
 	t.Run("already_exist_order_with_another_author_409", func(t *testing.T) {
+		acrChan := make(chan string, 5)
 		// создали стор
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
-		h := InitHandler(stor)
+		h := InitHandler(stor, acrChan)
 		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
@@ -116,12 +119,13 @@ func TestProcess(t *testing.T) {
 	})
 
 	t.Run("invalid data in input", func(t *testing.T) {
+		acrChan := make(chan string, 5)
 
 		// создали стор
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
-		h := InitHandler(stor)
+		h := InitHandler(stor, acrChan)
 		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
@@ -149,12 +153,13 @@ func TestProcess(t *testing.T) {
 	})
 
 	t.Run("anauthorize", func(t *testing.T) {
+		acrChan := make(chan string, 5)
 
 		// создали стор
 		stor := NewMockAbstrStorage(gomock.NewController(t))
 
 		// заинитили хендлер
-		h := InitHandler(stor)
+		h := InitHandler(stor, acrChan)
 		// h.GetLogin = GetLoginLenin - специально выключено, чтобы было видно, что не авторизовываем
 
 		//готовим запрос
