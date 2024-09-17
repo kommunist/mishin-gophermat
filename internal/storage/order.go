@@ -69,6 +69,12 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 			},
 		)
 	}
+
+	err = rows.Err()
+	if err != nil {
+		slog.Error("Error when iterate over rows", "err", err)
+		return nil, err
+	}
 	return r, nil
 }
 

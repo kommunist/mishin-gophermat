@@ -50,5 +50,11 @@ func (db *DB) SelectWithdrawnsByLogin(ctx context.Context, login string) ([]map[
 			},
 		)
 	}
+	err = rows.Err()
+	if err != nil {
+		slog.Error("Error when iterate over rows", "err", err)
+		return nil, err
+	}
+
 	return r, nil
 }

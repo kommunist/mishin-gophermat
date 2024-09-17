@@ -27,6 +27,7 @@ func (acr *Accrual) getOrderData(number string) (string, float64, error) { // st
 	}
 
 	bytes, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
 	if err != nil {
 		slog.Error("Error when get bytes from response", "err", err)
 		return "", 0, err
