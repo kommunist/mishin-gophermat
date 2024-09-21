@@ -80,7 +80,7 @@ func TestProcess(t *testing.T) {
 		assert.Equal(t, http.StatusNoContent, res.StatusCode, "response status must be 204") // 204
 	})
 
-	t.Run("when_anauthorize_", func(t *testing.T) {
+	t.Run("when_unanauthorize_401", func(t *testing.T) {
 
 		// создали стор
 		stor := NewMockOrdersGetter(gomock.NewController(t))
