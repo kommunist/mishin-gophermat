@@ -4,14 +4,14 @@ import (
 	"context"
 )
 
-type AbstrStorage interface {
-	CreateUser(ctx context.Context, login string, password string) error
+type UserCreator interface {
+	UserCreate(ctx context.Context, login string, password string) error
 }
 
 type RegistrationHandler struct {
-	DB AbstrStorage
+	DB UserCreator
 }
 
-func InitHandler(db AbstrStorage) RegistrationHandler {
+func InitHandler(db UserCreator) RegistrationHandler {
 	return RegistrationHandler{DB: db}
 }

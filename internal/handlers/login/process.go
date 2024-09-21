@@ -31,7 +31,7 @@ func (h *LoginHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ex, err := h.DB.SelectUser(r.Context(), rs.Login, rs.Password)
+	ex, err := h.DB.UserGet(r.Context(), rs.Login, rs.Password)
 
 	if !ex {
 		slog.Info("User not found")

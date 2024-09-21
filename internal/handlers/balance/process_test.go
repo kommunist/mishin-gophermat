@@ -22,7 +22,7 @@ func TestProcess(t *testing.T) {
 	t.Run("correct_return_list_200", func(t *testing.T) {
 
 		// создали стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockBalanceGetter(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
@@ -34,7 +34,7 @@ func TestProcess(t *testing.T) {
 			httptest.NewRequest(http.MethodGet, "/api/user/balance", nil).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectBalanceByLogin(ctx, "lenin").Return(
+		stor.EXPECT().BalanceGet(ctx, "lenin").Return(
 			500.0, 60.0, nil,
 		)
 
@@ -58,7 +58,7 @@ func TestProcess(t *testing.T) {
 	t.Run("when_without_authorize_401", func(t *testing.T) {
 
 		// создали стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockBalanceGetter(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
@@ -70,7 +70,7 @@ func TestProcess(t *testing.T) {
 			httptest.NewRequest(http.MethodGet, "/api/user/balance", nil).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectBalanceByLogin(ctx, "lenin").Times(0)
+		stor.EXPECT().BalanceGet(ctx, "lenin").Times(0)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()

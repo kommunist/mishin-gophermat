@@ -34,7 +34,7 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderData, err := h.DB.SelectOrderByNumber(r.Context(), string(body))
+	orderData, err := h.DB.OrderByNumberGet(r.Context(), string(body))
 
 	if err != nil {
 		slog.Error("Error when find data in db", "err", err)
@@ -53,7 +53,7 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		}
 	} else { // если заказа нет
 		number := string(body)
-		err = h.DB.CreateOrder(r.Context(), number, currUser)
+		err = h.DB.OrderCreate(r.Context(), number, currUser)
 		if err != nil {
 			slog.Error("Error when create data in db", "err", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)

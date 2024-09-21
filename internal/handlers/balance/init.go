@@ -7,18 +7,18 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-type AbstrStorage interface {
-	SelectBalanceByLogin(ctx context.Context, login string) (float64, float64, error)
+type BalanceGetter interface {
+	BalanceGet(ctx context.Context, login string) (float64, float64, error)
 }
 
 type BalanceHandler struct {
-	DB AbstrStorage
+	DB BalanceGetter
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
 	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
 }
 
-func InitHandler(db AbstrStorage) BalanceHandler {
+func InitHandler(db BalanceGetter) BalanceHandler {
 	return BalanceHandler{
 		DB:       db,
 		GetLogin: jwtauth.FromContext,

@@ -42,7 +42,7 @@ func (h *PostWithdrawsHandler) Process(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// проверим баланс
-	curr, _, err := h.DB.SelectBalanceByLogin(r.Context(), currUser)
+	curr, _, err := h.DB.BalanceGet(r.Context(), currUser)
 	if err != nil {
 		slog.Error("Error when select balance of current user", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -55,7 +55,7 @@ func (h *PostWithdrawsHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.DB.CreateWithdrawn(r.Context(), currUser, req.Number, req.Value)
+	err = h.DB.WithdrawnCreate(r.Context(), currUser, req.Number, req.Value)
 	if err != nil {
 		slog.Error("Error when create withdrawn in db", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

@@ -15,7 +15,7 @@ import (
 func TestProcess(t *testing.T) {
 	t.Run("login_user_happy_path_200", func(t *testing.T) {
 		// создали конфиг и стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockUserGetter(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
@@ -31,7 +31,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход
-		stor.EXPECT().SelectUser(ctx, "Login", "Password").Return(true, nil)
+		stor.EXPECT().UserGet(ctx, "Login", "Password").Return(true, nil)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -53,7 +53,7 @@ func TestProcess(t *testing.T) {
 
 	t.Run("login_user_in_db_incorrect_format_400", func(t *testing.T) {
 		// создали конфиг и стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockUserGetter(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
@@ -68,7 +68,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// т.е. ожидаем, что запроса в базу не будет
-		stor.EXPECT().SelectUser(ctx, "Login", "Password").Times(0)
+		stor.EXPECT().UserGet(ctx, "Login", "Password").Times(0)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -82,7 +82,7 @@ func TestProcess(t *testing.T) {
 
 	t.Run("login_user_not_found", func(t *testing.T) {
 		// создали конфиг и стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockUserGetter(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
@@ -98,7 +98,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход
-		stor.EXPECT().SelectUser(
+		stor.EXPECT().UserGet(
 			ctx, "Login", "Password",
 		).Return(false, nil)
 

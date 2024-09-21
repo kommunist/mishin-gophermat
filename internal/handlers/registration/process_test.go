@@ -17,7 +17,7 @@ import (
 func TestProcess(t *testing.T) {
 	t.Run("create_user_in_db_happy_path_200", func(t *testing.T) {
 		// создали конфиг и стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockUserCreator(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
@@ -33,7 +33,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход
-		stor.EXPECT().CreateUser(ctx, "Login", "Password")
+		stor.EXPECT().UserCreate(ctx, "Login", "Password")
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -56,7 +56,7 @@ func TestProcess(t *testing.T) {
 
 	t.Run("create_user_in_db_incorrect_format_400", func(t *testing.T) {
 		// создали конфиг и стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockUserCreator(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
@@ -71,7 +71,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// т.е. ожидаем, что запроса в базу не будет
-		stor.EXPECT().CreateUser(ctx, "Login", "Password").Times(0)
+		stor.EXPECT().UserCreate(ctx, "Login", "Password").Times(0)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -85,7 +85,7 @@ func TestProcess(t *testing.T) {
 
 	t.Run("create_user_in_db_already_exist_409", func(t *testing.T) {
 		// создали конфиг и стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockUserCreator(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
@@ -101,7 +101,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход
-		stor.EXPECT().CreateUser(
+		stor.EXPECT().UserCreate(
 			ctx, "Login", "Password",
 		).Return(exist.NewExistError(errors.New("qq")))
 

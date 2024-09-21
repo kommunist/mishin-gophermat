@@ -22,7 +22,7 @@ func TestProcess(t *testing.T) {
 		acrChan := make(chan string, 5)
 
 		// создали стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockOrderCreator(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
@@ -38,9 +38,9 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrderByNumber(ctx, "98265820")
+		stor.EXPECT().OrderByNumberGet(ctx, "98265820")
 		// ожидаем, что в базе будет создан заказ
-		stor.EXPECT().CreateOrder(ctx, "98265820", "lenin")
+		stor.EXPECT().OrderCreate(ctx, "98265820", "lenin")
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -55,7 +55,7 @@ func TestProcess(t *testing.T) {
 	t.Run("already_exist_order_with_same_author_200", func(t *testing.T) {
 		acrChan := make(chan string, 5)
 		// создали стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockOrderCreator(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
@@ -71,7 +71,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrderByNumber(ctx, "98265820").Return(
+		stor.EXPECT().OrderByNumberGet(ctx, "98265820").Return(
 			map[string]interface{}{"userLogin": "lenin"}, nil,
 		)
 
@@ -88,7 +88,7 @@ func TestProcess(t *testing.T) {
 	t.Run("already_exist_order_with_another_author_409", func(t *testing.T) {
 		acrChan := make(chan string, 5)
 		// создали стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockOrderCreator(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
@@ -104,7 +104,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrderByNumber(ctx, "98265820").Return(
+		stor.EXPECT().OrderByNumberGet(ctx, "98265820").Return(
 			map[string]interface{}{"userLogin": "bronstein"}, nil,
 		)
 
@@ -122,7 +122,7 @@ func TestProcess(t *testing.T) {
 		acrChan := make(chan string, 5)
 
 		// создали стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockOrderCreator(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
@@ -138,9 +138,9 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrderByNumber(ctx, "1111").Times(0)
+		stor.EXPECT().OrderByNumberGet(ctx, "1111").Times(0)
 		// ожидаем, что в базе будет создан заказ
-		stor.EXPECT().CreateOrder(ctx, "1111", "lenin").Times(0)
+		stor.EXPECT().OrderCreate(ctx, "1111", "lenin").Times(0)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -156,7 +156,7 @@ func TestProcess(t *testing.T) {
 		acrChan := make(chan string, 5)
 
 		// создали стор
-		stor := NewMockAbstrStorage(gomock.NewController(t))
+		stor := NewMockOrderCreator(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
@@ -172,9 +172,9 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().SelectOrderByNumber(ctx, "98265820").Times(0)
+		stor.EXPECT().OrderByNumberGet(ctx, "98265820").Times(0)
 		// ожидаем, что в базе будет создан заказ
-		stor.EXPECT().CreateOrder(ctx, "98265820", "lenin").Times(0)
+		stor.EXPECT().OrderCreate(ctx, "98265820", "lenin").Times(0)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
