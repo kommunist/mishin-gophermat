@@ -5,7 +5,7 @@ import (
 	"log/slog"
 )
 
-func (db *DB) SelectBalanceByLogin(ctx context.Context, login string) (float64, float64, error) { // current, withdrawn
+func (db *DB) BalanceGet(ctx context.Context, login string) (float64, float64, error) { // current, withdrawn
 	var checkDebit interface{}
 	var checkCredit interface{}
 	var debit float64

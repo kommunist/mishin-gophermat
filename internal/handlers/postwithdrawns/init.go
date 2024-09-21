@@ -7,19 +7,19 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-type AbstrStorage interface {
-	CreateWithdrawn(ctx context.Context, userLogin string, number string, value float64) error
-	SelectBalanceByLogin(ctx context.Context, login string) (float64, float64, error)
+type WithdrawnCreator interface {
+	WithdrawnCreate(ctx context.Context, userLogin string, number string, value float64) error
+	BalanceGet(ctx context.Context, login string) (float64, float64, error)
 }
 
 type PostWithdrawsHandler struct {
-	DB AbstrStorage
+	DB WithdrawnCreator
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
 	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
 }
 
-func InitHandler(db AbstrStorage) PostWithdrawsHandler {
+func InitHandler(db WithdrawnCreator) PostWithdrawsHandler {
 	return PostWithdrawsHandler{
 		DB:       db,
 		GetLogin: jwtauth.FromContext,

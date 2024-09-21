@@ -22,7 +22,7 @@ func (h *BalanceHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	current, withdrawn, err := h.DB.SelectBalanceByLogin(
+	current, withdrawn, err := h.DB.BalanceGet(
 		r.Context(), currUser,
 	)
 	resp := response{Current: current, Withdrawn: withdrawn}

@@ -25,7 +25,7 @@ func (h *ListOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := h.DB.SelectOrdersByLogin(r.Context(), currUser)
+	data, err := h.DB.OrdersGet(r.Context(), currUser)
 	if err != nil { // 204
 		slog.Error("Error when get data from db", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

@@ -2,15 +2,15 @@ package accrual
 
 import "context"
 
-type AbstrStorage interface {
-	UpdateOrderStatusAndValue(ctx context.Context, number string, status string, value float64) error
+type OrderUpdater interface {
+	OrderUpdate(ctx context.Context, number string, status string, value float64) error
 }
 
 type Accrual struct {
-	DB  AbstrStorage
+	DB  OrderUpdater
 	URI string
 }
 
-func InitAccrual(db AbstrStorage, URI string) Accrual {
+func InitAccrual(db OrderUpdater, URI string) Accrual {
 	return Accrual{DB: db, URI: URI}
 }

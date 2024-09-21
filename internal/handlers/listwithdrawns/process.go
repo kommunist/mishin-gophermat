@@ -24,7 +24,7 @@ func (h *ListWithdrawns) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := h.DB.SelectWithdrawnsByLogin(r.Context(), currUser)
+	data, err := h.DB.WithdrawnsGet(r.Context(), currUser)
 	if err != nil {
 		slog.Error("Error when get data from db", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

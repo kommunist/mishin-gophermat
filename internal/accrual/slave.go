@@ -44,7 +44,7 @@ func (acr *Accrual) process(number string) (bool, error) { // repeat?(true/false
 
 	slog.Info("Try to update order", "number", number, "value", accrual, "status", status)
 
-	err = acr.DB.UpdateOrderStatusAndValue(context.Background(), number, status, accrual)
+	err = acr.DB.OrderUpdate(context.Background(), number, status, accrual)
 	if err != nil {
 		slog.Error("Error when update order in db", "err", err)
 		return false, nil // будем считать, что достаточно того, что написали в логи. Возможно надо уходить на нвоый круг

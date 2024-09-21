@@ -32,7 +32,7 @@ func (h *RegistrationHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.DB.CreateUser(r.Context(), rs.Login, rs.Password)
+	err = h.DB.UserCreate(r.Context(), rs.Login, rs.Password)
 
 	switch err.(type) { // понравился такой синтаксис проверки, так как можно в любой момент его расширять
 	case *exist.ExistError:

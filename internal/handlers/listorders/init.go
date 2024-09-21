@@ -7,18 +7,18 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-type AbstrStorage interface {
-	SelectOrdersByLogin(ctx context.Context, login string) (data []map[string]interface{}, err error)
+type OrdersGetter interface {
+	OrdersGet(ctx context.Context, login string) (data []map[string]interface{}, err error)
 }
 
 type ListOrdersHandler struct {
-	DB AbstrStorage
+	DB OrdersGetter
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
 	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
 }
 
-func InitHandler(db AbstrStorage) ListOrdersHandler {
+func InitHandler(db OrdersGetter) ListOrdersHandler {
 	return ListOrdersHandler{
 		DB:       db,
 		GetLogin: jwtauth.FromContext,

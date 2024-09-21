@@ -10,7 +10,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func (db *DB) SelectOrderByNumber(ctx context.Context, number string) (map[string]interface{}, error) {
+func (db *DB) OrderByNumberGet(ctx context.Context, number string) (map[string]interface{}, error) {
 	var userLogin string
 
 	r := make(map[string]interface{})
@@ -31,7 +31,7 @@ func (db *DB) SelectOrderByNumber(ctx context.Context, number string) (map[strin
 	return r, nil
 }
 
-func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[string]interface{}, error) {
+func (db *DB) OrdersGet(ctx context.Context, login string) ([]map[string]interface{}, error) {
 	r := make([]map[string]interface{}, 0)
 	var number, status, uploadedAt string
 	var checkAccrual interface{}
@@ -78,7 +78,7 @@ func (db *DB) SelectOrdersByLogin(ctx context.Context, login string) ([]map[stri
 	return r, nil
 }
 
-func (db *DB) CreateOrder(ctx context.Context, number string, userLogin string) error {
+func (db *DB) OrderCreate(ctx context.Context, number string, userLogin string) error {
 	_, err := db.driver.ExecContext(ctx,
 		"INSERT INTO orders (number, user_login) VALUES ($1, $2)",
 		number, userLogin,
@@ -99,7 +99,7 @@ func (db *DB) CreateOrder(ctx context.Context, number string, userLogin string) 
 	return nil
 }
 
-func (db *DB) UpdateOrderStatusAndValue(ctx context.Context, number string, status string, value float64) error {
+func (db *DB) OrderUpdate(ctx context.Context, number string, status string, value float64) error {
 	_, err := db.driver.ExecContext(ctx,
 		"UPDATE orders SET status = $1, value = $2 WHERE number = $3",
 		status, value, number,
