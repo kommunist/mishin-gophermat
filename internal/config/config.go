@@ -14,7 +14,7 @@ type MainConfig struct {
 
 func MakeConfig() MainConfig {
 	config := MainConfig{
-		RunAddress:  "0.0.0.0:8080",
+		RunAddress:  "",
 		DatabaseURI: "",
 		AccrualURI:  "",
 	}
@@ -23,19 +23,31 @@ func MakeConfig() MainConfig {
 }
 
 func (c *MainConfig) InitConfig() {
-	// c.InitFlags()
-	c.Parse()
+	c.ParseEnv()
+	c.InitFlags()
 }
 
 func (c *MainConfig) InitFlags() {
-	flag.StringVar(&c.RunAddress, "a", "localhost:8080", "default host for server")
-	flag.StringVar(&c.DatabaseURI, "d", "", "database URI")
-	flag.StringVar(&c.AccrualURI, "r", "", "accrual URI")
+	var f string
+	flag.StringVar(&f, "a", "localhost:8080", "default host for server")
+	if c.RunAddress == "" {
+		c.RunAddress = f
+	}
+
+	flag.StringVar(&f, "d", "", "database URI")
+	if c.DatabaseURI == "" {
+		c.DatabaseURI = f
+	}
+
+	flag.StringVar(&f, "r", "", "accrual URI")
+	if c.AccrualURI == "" {
+		c.AccrualURI = f
+	}
 
 	slog.Info("flags inited")
 }
 
-func (c *MainConfig) Parse() {
+func (c *MainConfig) ParseEnv() {
 	flag.Parse()
 
 	if e := os.Getenv("RUN_ADDRESS"); e != "" {
