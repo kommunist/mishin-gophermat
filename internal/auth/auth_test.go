@@ -16,6 +16,7 @@ func TestEncrypt(t *testing.T) {
 			t,
 			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6Im1hcmtzIn0.YbmB9Pl2FPkQ-8Xjo4GmGHYw9PjzO7LKK_8JATmtVrU",
 			encrypted,
+			"data must be correct encrypted",
 		)
 
 	})

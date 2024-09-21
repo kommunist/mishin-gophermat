@@ -45,7 +45,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusOK, res.StatusCode) // 200
+		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200") // 200
 	})
 
 	t.Run("create_withdrawn_when_balance_is_low_402", func(t *testing.T) {
@@ -75,7 +75,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusPaymentRequired, res.StatusCode) // 402
+		assert.Equal(t, http.StatusPaymentRequired, res.StatusCode, "response status must be 402") // 402
 	})
 
 	t.Run("when_user_not_authorized", func(t *testing.T) {
@@ -105,6 +105,6 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode) // 401
+		assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
 	})
 }

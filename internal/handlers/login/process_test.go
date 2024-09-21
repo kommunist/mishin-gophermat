@@ -40,15 +40,15 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusOK, res.StatusCode) // 200
+		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200") // 200
 		// Проверяем куку
 		cookie := res.Cookies()[0]
-		assert.Equal(t, "jwt", cookie.Name)
-		assert.Greater(t, len(cookie.Value), 0)
+		assert.Equal(t, "jwt", cookie.Name, "response has cookie with name jwt")
+		assert.Greater(t, len(cookie.Value), 0, "length of this cookie is positive")
 
 		// Проверяем, что хедер совпадает с кукой
 		header := res.Header.Get("Authorization")
-		assert.Equal(t, "BEARER "+cookie.Value, header)
+		assert.Equal(t, "BEARER "+cookie.Value, header, "authorization cookie must has same as cookie value")
 	})
 
 	t.Run("login_user_in_db_incorrect_format_400", func(t *testing.T) {
@@ -77,7 +77,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusBadRequest, res.StatusCode) // 400
+		assert.Equal(t, http.StatusBadRequest, res.StatusCode, "response status must be 400") // 400
 	})
 
 	t.Run("login_user_not_found", func(t *testing.T) {
@@ -109,14 +109,14 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode) // 401
+		assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
 		// Проверяем отсутствие куки
 		cookies := res.Cookies()
-		assert.Equal(t, 0, len(cookies))
+		assert.Equal(t, 0, len(cookies), "response must be without cookies")
 
 		// Проверяем, что хедера нет
 		header := res.Header.Get("Authorization")
-		assert.Equal(t, "", header)
+		assert.Equal(t, "", header, "response must be without authorization header")
 
 	})
 
