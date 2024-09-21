@@ -14,12 +14,12 @@ func (acr *Accrual) InitWorkers(inp chan string) {
 
 func (acr *Accrual) slave(inp chan string) {
 	for num := range inp {
-		founded, err := acr.process(num)
+		repeat, err := acr.process(num)
 		if err != nil {
 			slog.Error("error when process number from channel", "err", err)
 			continue
 		}
-		if !founded {
+		if repeat {
 			time.Sleep(5 * time.Second) // маленько подождем, чтобы не перегружать
 			inp <- num                  // положим обратно
 		}
