@@ -33,15 +33,15 @@ func (h *LoginHandler) Process(w http.ResponseWriter, r *http.Request) {
 
 	ex, err := h.DB.UserGet(r.Context(), rs.Login, rs.Password)
 
+	if err != nil {
+		slog.Error("Error select user", "err", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
 	if !ex {
 		slog.Info("User not found")
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
-	}
-
-	if err != nil {
-		slog.Error("Error select user", "err", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 
 	encrypted := auth.Encrypt(map[string]interface{}{"login": rs.Login})
