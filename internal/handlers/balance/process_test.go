@@ -48,11 +48,11 @@ func TestProcess(t *testing.T) {
 		resp := response{}
 		json.Unmarshal(body, &resp)
 
-		assert.Equal(t, 500.0, resp.Current)
-		assert.Equal(t, 60.0, resp.Withdrawn)
+		assert.Equal(t, 500.0, resp.Current, "current balance must be eq to result from db")
+		assert.Equal(t, 60.0, resp.Withdrawn, "current size of withdrawns must be eq to result from db")
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusOK, res.StatusCode) // 200
+		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200") // 200
 	})
 
 	t.Run("when_without_authorize_401", func(t *testing.T) {
@@ -79,6 +79,6 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode) // 401
+		assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
 	})
 }

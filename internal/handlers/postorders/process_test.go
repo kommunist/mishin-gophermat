@@ -49,7 +49,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusAccepted, res.StatusCode) // 202
+		assert.Equal(t, http.StatusAccepted, res.StatusCode, "response status must be 202") // 202
 	})
 
 	t.Run("already_exist_order_with_same_author_200", func(t *testing.T) {
@@ -82,7 +82,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusOK, res.StatusCode) // 200
+		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200") // 200
 	})
 
 	t.Run("already_exist_order_with_another_author_409", func(t *testing.T) {
@@ -115,7 +115,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusConflict, res.StatusCode) // 409
+		assert.Equal(t, http.StatusConflict, res.StatusCode, "response status must be 409") // 409
 	})
 
 	t.Run("invalid data in input", func(t *testing.T) {
@@ -149,7 +149,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode) // 422
+		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode, "response status must be 422") // 422
 	})
 
 	t.Run("anauthorize", func(t *testing.T) {
@@ -183,7 +183,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode) // 422
+		assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
 	})
 
 }

@@ -49,7 +49,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusOK, res.StatusCode) // 200
+		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200") // 200
 	})
 
 	t.Run("when_no_data_204", func(t *testing.T) {
@@ -76,7 +76,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusNoContent, res.StatusCode) // 204
+		assert.Equal(t, http.StatusNoContent, res.StatusCode, "response status must be 204") // 204
 	})
 
 	t.Run("when_anauthorize_", func(t *testing.T) {
@@ -102,6 +102,6 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode) // 401
+		assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
 	})
 }
