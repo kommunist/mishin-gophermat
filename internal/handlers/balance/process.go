@@ -25,7 +25,6 @@ func (h *BalanceHandler) Process(w http.ResponseWriter, r *http.Request) {
 	current, withdrawn, err := h.DB.BalanceGet(
 		r.Context(), currUser,
 	)
-	resp := response{Current: current, Withdrawn: withdrawn}
 
 	if err != nil {
 		slog.Error("Error when get data from db", "err", err)
@@ -33,6 +32,7 @@ func (h *BalanceHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	resp := response{Current: current, Withdrawn: withdrawn}
 	respBody, err := json.Marshal(resp)
 	if err != nil {
 		slog.Error("Error when generate json", "err", err)
