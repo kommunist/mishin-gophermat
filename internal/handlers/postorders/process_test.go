@@ -118,7 +118,7 @@ func TestProcess(t *testing.T) {
 		assert.Equal(t, http.StatusConflict, res.StatusCode, "response status must be 409") // 409
 	})
 
-	t.Run("invalid data in input", func(t *testing.T) {
+	t.Run("invalid_data_in_input_422", func(t *testing.T) {
 		acrChan := make(chan string, 5)
 
 		// создали стор
@@ -152,7 +152,7 @@ func TestProcess(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode, "response status must be 422") // 422
 	})
 
-	t.Run("anauthorize", func(t *testing.T) {
+	t.Run("unauthorize_401", func(t *testing.T) {
 		acrChan := make(chan string, 5)
 
 		// создали стор
