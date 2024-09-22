@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func GetLoginLenin(ctx context.Context) (jwt.Token, map[string]interface{}, error) {
-	return nil, map[string]interface{}{"login": "lenin"}, nil
+func GetLoginLenin(ctx context.Context) (jwt.Token, map[string]any, error) {
+	return nil, map[string]any{"login": "lenin"}, nil
 }
 
 func TestProcess(t *testing.T) {
@@ -33,7 +33,7 @@ func TestProcess(t *testing.T) {
 
 		// ожидаем, что в базу будет такой поход для поиска
 		stor.EXPECT().OrdersGet(ctx, "lenin").Return(
-			[]map[string]interface{}{
+			[]map[string]any{
 				{
 					"number":     "123",
 					"status":     "NEW",

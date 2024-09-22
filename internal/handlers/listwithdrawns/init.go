@@ -8,14 +8,14 @@ import (
 )
 
 type WithdrawnsGetter interface {
-	WithdrawnsGet(ctx context.Context, login string) (data []map[string]interface{}, err error)
+	WithdrawnsGet(ctx context.Context, login string) (data []map[string]any, err error)
 }
 
 type ListWithdrawns struct {
 	DB WithdrawnsGetter
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
-	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
+	GetLogin func(context.Context) (jwt.Token, map[string]any, error)
 }
 
 func InitHandler(db WithdrawnsGetter) ListWithdrawns {

@@ -8,7 +8,7 @@ import (
 )
 
 type OrderCreator interface {
-	OrderByNumberGet(ctx context.Context, numer string) (data map[string]interface{}, err error)
+	OrderByNumberGet(ctx context.Context, numer string) (data map[string]any, err error)
 	OrderCreate(ctx context.Context, number string, userLogin string) error
 }
 
@@ -17,7 +17,7 @@ type PostOrdersHandler struct {
 	acrChan chan string
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
-	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
+	GetLogin func(context.Context) (jwt.Token, map[string]any, error)
 }
 
 func InitHandler(db OrderCreator, acrChan chan string) PostOrdersHandler {

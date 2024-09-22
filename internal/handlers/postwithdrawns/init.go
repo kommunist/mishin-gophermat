@@ -16,7 +16,7 @@ type PostWithdrawsHandler struct {
 	DB WithdrawnCreator
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
-	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
+	GetLogin func(context.Context) (jwt.Token, map[string]any, error)
 }
 
 func InitHandler(db WithdrawnCreator) PostWithdrawsHandler {

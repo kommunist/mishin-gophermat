@@ -19,8 +19,8 @@ func (db *DB) WithdrawnCreate(ctx context.Context, userLogin string, number stri
 	return nil
 }
 
-func (db *DB) WithdrawnsGet(ctx context.Context, login string) ([]map[string]interface{}, error) {
-	r := make([]map[string]interface{}, 0)
+func (db *DB) WithdrawnsGet(ctx context.Context, login string) ([]map[string]any, error) {
+	r := make([]map[string]any, 0)
 	var number, processedAt string
 	var value float64
 
@@ -43,7 +43,7 @@ func (db *DB) WithdrawnsGet(ctx context.Context, login string) ([]map[string]int
 		}
 		r = append(
 			r,
-			map[string]interface{}{
+			map[string]any{
 				"number":      number,
 				"processedAt": processedAt,
 				"value":       value,

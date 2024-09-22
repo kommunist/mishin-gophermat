@@ -13,8 +13,8 @@ import (
 	"github.com/likexian/gokit/assert"
 )
 
-func GetLoginLenin(ctx context.Context) (jwt.Token, map[string]interface{}, error) {
-	return nil, map[string]interface{}{"login": "lenin"}, nil
+func GetLoginLenin(ctx context.Context) (jwt.Token, map[string]any, error) {
+	return nil, map[string]any{"login": "lenin"}, nil
 }
 
 func TestProcess(t *testing.T) {

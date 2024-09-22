@@ -6,8 +6,8 @@ import (
 )
 
 func (db *DB) BalanceGet(ctx context.Context, login string) (float64, float64, error) { // current, withdrawn
-	var checkDebit interface{}
-	var checkCredit interface{}
+	var checkDebit any
+	var checkCredit any
 	var debit float64
 	var credit float64
 

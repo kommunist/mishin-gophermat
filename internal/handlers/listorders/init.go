@@ -8,14 +8,14 @@ import (
 )
 
 type OrdersGetter interface {
-	OrdersGet(ctx context.Context, login string) (data []map[string]interface{}, err error)
+	OrdersGet(ctx context.Context, login string) (data []map[string]any, err error)
 }
 
 type ListOrdersHandler struct {
 	DB OrdersGetter
 
 	// сделано для того, чтобы мокать работу с токеном в тестах
-	GetLogin func(context.Context) (jwt.Token, map[string]interface{}, error)
+	GetLogin func(context.Context) (jwt.Token, map[string]any, error)
 }
 
 func InitHandler(db OrdersGetter) ListOrdersHandler {

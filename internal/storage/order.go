@@ -10,10 +10,10 @@ import (
 	"github.com/lib/pq"
 )
 
-func (db *DB) OrderByNumberGet(ctx context.Context, number string) (map[string]interface{}, error) {
+func (db *DB) OrderByNumberGet(ctx context.Context, number string) (map[string]any, error) {
 	var userLogin string
 
-	r := make(map[string]interface{})
+	r := make(map[string]any)
 	row := db.driver.QueryRowContext(ctx, "SELECT user_login FROM orders where number = $1 limit 1", number)
 	err := row.Scan(&userLogin)
 
@@ -31,10 +31,10 @@ func (db *DB) OrderByNumberGet(ctx context.Context, number string) (map[string]i
 	return r, nil
 }
 
-func (db *DB) OrdersGet(ctx context.Context, login string) ([]map[string]interface{}, error) {
-	r := make([]map[string]interface{}, 0)
+func (db *DB) OrdersGet(ctx context.Context, login string) ([]map[string]any, error) {
+	r := make([]map[string]any, 0)
 	var number, status, uploadedAt string
-	var checkAccrual interface{}
+	var checkAccrual any
 	var accrual float64
 
 	rows, err := db.driver.QueryContext(
@@ -61,7 +61,7 @@ func (db *DB) OrdersGet(ctx context.Context, login string) ([]map[string]interfa
 		}
 		r = append(
 			r,
-			map[string]interface{}{
+			map[string]any{
 				"number":     number,
 				"status":     status,
 				"uploadedAt": uploadedAt,
