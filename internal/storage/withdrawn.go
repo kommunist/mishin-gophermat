@@ -7,7 +7,7 @@ import (
 
 func (db *DB) WithdrawnCreate(ctx context.Context, userLogin string, number string, value float64) error {
 	_, err := db.driver.ExecContext(ctx,
-		"INSERT INTO withdrawns (number, user_login, value) VALUES ($1, $2, $3) RETURNING ID",
+		"INSERT INTO withdrawns (number, user_login, value) VALUES ($1, $2, $3)",
 		number, userLogin, value,
 	)
 
