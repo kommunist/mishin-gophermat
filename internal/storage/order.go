@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log/slog"
 	"mishin-gophermat/internal/errors/exist"
+	"mishin-gophermat/internal/models"
 
 	"github.com/lib/pq"
 )
@@ -28,11 +29,9 @@ func (db *DB) OrderByNumberGet(ctx context.Context, number string) (string, erro
 	return orderLogin, nil
 }
 
-func (db *DB) OrdersGet(ctx context.Context, login string) ([]map[string]any, error) {
-	r := make([]map[string]any, 0)
-	var number, status, uploadedAt string
-	var checkAccrual any
-	var accrual float64
+func (db *DB) OrdersGet(ctx context.Context, login string) ([]models.Order, error) {
+	var order models.Order
+	r := make([]models.Order, 0)
 
 	rows, err := db.driver.QueryContext(
 		ctx,
@@ -48,23 +47,13 @@ func (db *DB) OrdersGet(ctx context.Context, login string) ([]map[string]any, er
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&number, &status, &uploadedAt, &checkAccrual)
+		err = rows.Scan(&order.Number, &order.Status, &order.UploadedAt, &order.Value)
 		if err != nil {
 			slog.Error("Error when scan data from result", "err", err)
 			return nil, err
 		}
-		if checkAccrual != nil {
-			accrual = checkAccrual.(float64)
-		}
-		r = append(
-			r,
-			map[string]any{
-				"number":     number,
-				"status":     status,
-				"uploadedAt": uploadedAt,
-				"accrual":    accrual,
-			},
-		)
+
+		r = append(r, order)
 	}
 
 	err = rows.Err()

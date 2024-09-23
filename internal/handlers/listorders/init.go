@@ -2,13 +2,14 @@ package listorders
 
 import (
 	"context"
+	"mishin-gophermat/internal/models"
 
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 type OrdersGetter interface {
-	OrdersGet(ctx context.Context, login string) (data []map[string]any, err error)
+	OrdersGet(ctx context.Context, login string) (data []models.Order, err error)
 }
 
 type ListOrdersHandler struct {

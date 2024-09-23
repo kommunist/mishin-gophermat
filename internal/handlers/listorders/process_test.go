@@ -2,6 +2,7 @@ package listorders
 
 import (
 	"context"
+	"mishin-gophermat/internal/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,12 +34,12 @@ func TestProcess(t *testing.T) {
 
 		// ожидаем, что в базу будет такой поход для поиска
 		stor.EXPECT().OrdersGet(ctx, "lenin").Return(
-			[]map[string]any{
+			[]models.Order{
 				{
-					"number":     "123",
-					"status":     "NEW",
-					"accrual":    500.0,
-					"uploadedAt": "2021",
+					Number:     "123",
+					Status:     "NEW",
+					Value:      500.0,
+					UploadedAt: "2021",
 				},
 			}, nil,
 		)
