@@ -8,7 +8,7 @@ import (
 )
 
 type OrderCreator interface {
-	OrderByNumberGet(ctx context.Context, numer string) (data map[string]any, err error)
+	OrderByNumberGet(ctx context.Context, numer string) (login string, err error)
 	OrderCreate(ctx context.Context, number string, userLogin string) error
 }
 

@@ -34,7 +34,7 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderData, err := h.DB.OrderByNumberGet(r.Context(), string(body))
+	orderLogin, err := h.DB.OrderByNumberGet(r.Context(), string(body))
 
 	if err != nil {
 		slog.Error("Error when find data in db", "err", err)
@@ -42,16 +42,7 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if orderData != nil { // если заказ есть
-		if orderData["userLogin"] != currUser { // 409 StatusConflict
-			slog.Error("Order already upload by another user", "err", err)
-			w.WriteHeader(http.StatusConflict)
-		} else { // 200 StatusOK
-			slog.Info("Order already upload by this user")
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-		}
-	} else { // если заказа нет
+	if orderLogin == "" { // если заказа нет
 		number := string(body)
 		err = h.DB.OrderCreate(r.Context(), number, currUser)
 		if err != nil {
@@ -62,6 +53,16 @@ func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
 		h.acrChan <- number
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted) // 202 Accepted
+		return
 	}
 
+	// если заказ есть
+	if orderLogin != currUser { // 409 StatusConflict
+		slog.Error("Order already upload by another user", "err", err)
+		w.WriteHeader(http.StatusConflict)
+	} else { // 200 StatusOK
+		slog.Info("Order already upload by this user")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+	}
 }

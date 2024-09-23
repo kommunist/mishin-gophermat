@@ -35,10 +35,10 @@ func (m *MockOrderCreator) EXPECT() *MockOrderCreatorMockRecorder {
 }
 
 // OrderByNumberGet mocks base method.
-func (m *MockOrderCreator) OrderByNumberGet(arg0 context.Context, arg1 string) (map[string]interface{}, error) {
+func (m *MockOrderCreator) OrderByNumberGet(arg0 context.Context, arg1 string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OrderByNumberGet", arg0, arg1)
-	ret0, _ := ret[0].(map[string]interface{})
+	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

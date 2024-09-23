@@ -71,9 +71,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().OrderByNumberGet(ctx, "98265820").Return(
-			map[string]any{"userLogin": "lenin"}, nil,
-		)
+		stor.EXPECT().OrderByNumberGet(ctx, "98265820").Return("lenin", nil)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -104,9 +102,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход для поиска
-		stor.EXPECT().OrderByNumberGet(ctx, "98265820").Return(
-			map[string]any{"userLogin": "bronstein"}, nil,
-		)
+		stor.EXPECT().OrderByNumberGet(ctx, "98265820").Return("bronstein", nil)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
