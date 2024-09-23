@@ -14,13 +14,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type FakeCrypter struct{}
+
+func (c *FakeCrypter) PassHash(pass string) (string, error) {
+	return "enc_" + pass + "_enc", nil
+}
+
 func TestProcess(t *testing.T) {
 	t.Run("create_user_in_db_happy_path_200", func(t *testing.T) {
 		// создали конфиг и стор
 		stor := NewMockUserCreator(gomock.NewController(t))
 
-		// заинитили хендлер
+		// заинитили хендлер и замокали енкриптер
 		h := InitHandler(stor)
+		h.hasher = &FakeCrypter{}
 
 		// подготовили данные для запроса и сам запрос
 		inputJSON, _ := json.Marshal(requestItem{Login: "Login", Password: "Password"})
@@ -33,7 +40,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход
-		stor.EXPECT().UserCreate(ctx, "Login", "Password")
+		stor.EXPECT().UserCreate(ctx, "Login", "enc_Password_enc")
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -58,8 +65,9 @@ func TestProcess(t *testing.T) {
 		// создали конфиг и стор
 		stor := NewMockUserCreator(gomock.NewController(t))
 
-		// заинитили хендлер
+		// заинитили хендлер и замокали енкриптер
 		h := InitHandler(stor)
+		h.hasher = &FakeCrypter{}
 
 		// подготовили данные для запроса и сам запрос
 		ctx := context.Background()
@@ -71,7 +79,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// т.е. ожидаем, что запроса в базу не будет
-		stor.EXPECT().UserCreate(ctx, "Login", "Password").Times(0)
+		stor.EXPECT().UserCreate(ctx, "Login", "enc_Password_enc").Times(0)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -87,8 +95,9 @@ func TestProcess(t *testing.T) {
 		// создали конфиг и стор
 		stor := NewMockUserCreator(gomock.NewController(t))
 
-		// заинитили хендлер
+		// заинитили хендлер и замокали енкриптер
 		h := InitHandler(stor)
+		h.hasher = &FakeCrypter{}
 
 		// подготовили данные для запроса и сам запрос
 		inputJSON, _ := json.Marshal(requestItem{Login: "Login", Password: "Password"})
@@ -102,7 +111,7 @@ func TestProcess(t *testing.T) {
 
 		// ожидаем, что в базу будет такой поход
 		stor.EXPECT().UserCreate(
-			ctx, "Login", "Password",
+			ctx, "Login", "enc_Password_enc",
 		).Return(exist.NewExistError(errors.New("qq")))
 
 		// Делаем запрос

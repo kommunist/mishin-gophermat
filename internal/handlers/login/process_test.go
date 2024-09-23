@@ -12,6 +12,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type FakeTrueChecker struct{} // для проверок положительного сценария
+
+func (c *FakeTrueChecker) PassCheck(pass string, hashed string) bool {
+	return true
+}
+
+type FakeFalseChecker struct{} // для проверок отрицательного сценария
+
+func (c *FakeFalseChecker) PassCheck(pass string, hashed string) bool {
+	return false
+}
+
 func TestProcess(t *testing.T) {
 	t.Run("login_user_happy_path_200", func(t *testing.T) {
 		// создали конфиг и стор
@@ -19,6 +31,7 @@ func TestProcess(t *testing.T) {
 
 		// заинитили хендлер
 		h := InitHandler(stor)
+		h.checker = &FakeTrueChecker{}
 
 		// подготовили данные для запроса и сам запрос
 		inputJSON, _ := json.Marshal(requestItem{Login: "Login", Password: "Password"})
@@ -31,7 +44,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход
-		stor.EXPECT().UserGet(ctx, "Login", "Password").Return(true, nil)
+		stor.EXPECT().UserGet(ctx, "Login").Return("hashed", nil)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -57,6 +70,7 @@ func TestProcess(t *testing.T) {
 
 		// заинитили хендлер
 		h := InitHandler(stor)
+		h.checker = &FakeTrueChecker{}
 
 		// подготовили данные для запроса и сам запрос
 		ctx := context.Background()
@@ -68,7 +82,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// т.е. ожидаем, что запроса в базу не будет
-		stor.EXPECT().UserGet(ctx, "Login", "Password").Times(0)
+		stor.EXPECT().UserGet(ctx, "Login").Times(0)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()
@@ -80,12 +94,13 @@ func TestProcess(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, res.StatusCode, "response status must be 400") // 400
 	})
 
-	t.Run("login_user_not_found", func(t *testing.T) {
+	t.Run("login_user_with_incorrect_password", func(t *testing.T) {
 		// создали конфиг и стор
 		stor := NewMockUserGetter(gomock.NewController(t))
 
 		// заинитили хендлер
 		h := InitHandler(stor)
+		h.checker = &FakeFalseChecker{}
 
 		// подготовили данные для запроса и сам запрос
 		inputJSON, _ := json.Marshal(requestItem{Login: "Login", Password: "Password"})
@@ -98,9 +113,7 @@ func TestProcess(t *testing.T) {
 			).WithContext(ctx)
 
 		// ожидаем, что в базу будет такой поход
-		stor.EXPECT().UserGet(
-			ctx, "Login", "Password",
-		).Return(false, nil)
+		stor.EXPECT().UserGet(ctx, "Login").Return("hashed", nil)
 
 		// Делаем запрос
 		w := httptest.NewRecorder()

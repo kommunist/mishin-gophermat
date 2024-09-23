@@ -35,16 +35,16 @@ func (m *MockUserGetter) EXPECT() *MockUserGetterMockRecorder {
 }
 
 // UserGet mocks base method.
-func (m *MockUserGetter) UserGet(arg0 context.Context, arg1, arg2 string) (bool, error) {
+func (m *MockUserGetter) UserGet(arg0 context.Context, arg1 string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UserGet", arg0, arg1, arg2)
-	ret0, _ := ret[0].(bool)
+	ret := m.ctrl.Call(m, "UserGet", arg0, arg1)
+	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // UserGet indicates an expected call of UserGet.
-func (mr *MockUserGetterMockRecorder) UserGet(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockUserGetterMockRecorder) UserGet(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserGet", reflect.TypeOf((*MockUserGetter)(nil).UserGet), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserGet", reflect.TypeOf((*MockUserGetter)(nil).UserGet), arg0, arg1)
 }
