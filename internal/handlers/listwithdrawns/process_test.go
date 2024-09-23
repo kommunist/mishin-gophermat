@@ -2,6 +2,7 @@ package listwithdrawns
 
 import (
 	"context"
+	"mishin-gophermat/internal/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,11 +34,11 @@ func TestProcess(t *testing.T) {
 
 		// ожидаем, что в базу будет такой поход для поиска
 		stor.EXPECT().WithdrawnsGet(ctx, "lenin").Return(
-			[]map[string]any{
+			[]models.Withdrawn{
 				{
-					"number":      "number",
-					"value":       500.0,
-					"processedAt": "2021",
+					Number:      "number",
+					Value:       500.0,
+					ProcessedAt: "2021",
 				},
 			}, nil,
 		)

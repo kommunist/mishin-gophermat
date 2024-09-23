@@ -2,13 +2,14 @@ package listwithdrawns
 
 import (
 	"context"
+	"mishin-gophermat/internal/models"
 
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 type WithdrawnsGetter interface {
-	WithdrawnsGet(ctx context.Context, login string) (data []map[string]any, err error)
+	WithdrawnsGet(ctx context.Context, login string) (data []models.Withdrawn, err error)
 }
 
 type ListWithdrawns struct {

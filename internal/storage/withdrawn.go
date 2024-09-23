@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"log/slog"
+	"mishin-gophermat/internal/models"
 )
 
 func (db *DB) WithdrawnCreate(ctx context.Context, userLogin string, number string, value float64) error {
@@ -19,10 +20,9 @@ func (db *DB) WithdrawnCreate(ctx context.Context, userLogin string, number stri
 	return nil
 }
 
-func (db *DB) WithdrawnsGet(ctx context.Context, login string) ([]map[string]any, error) {
-	r := make([]map[string]any, 0)
-	var number, processedAt string
-	var value float64
+func (db *DB) WithdrawnsGet(ctx context.Context, login string) ([]models.Withdrawn, error) {
+	r := make([]models.Withdrawn, 0)
+	w := models.Withdrawn{}
 
 	rows, err := db.driver.QueryContext(
 		ctx,
@@ -36,19 +36,12 @@ func (db *DB) WithdrawnsGet(ctx context.Context, login string) ([]map[string]any
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&number, &processedAt, &value)
+		err = rows.Scan(&w.Number, &w.ProcessedAt, &w.Value)
 		if err != nil {
 			slog.Error("Error when scan data from result", "err", err)
 			return nil, err
 		}
-		r = append(
-			r,
-			map[string]any{
-				"number":      number,
-				"processedAt": processedAt,
-				"value":       value,
-			},
-		)
+		r = append(r, w)
 	}
 	err = rows.Err()
 	if err != nil {

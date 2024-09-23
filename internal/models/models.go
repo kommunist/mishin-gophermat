@@ -7,3 +7,11 @@ type Order struct {
 	UploadedAt string  `json:"uploaded_at"`
 	UserLogin  string
 }
+
+type Withdrawn struct {
+	ID          string
+	Number      string `json:"order"`
+	UserLogin   string
+	Value       float64 `json:"sum"`
+	ProcessedAt string  `json:"processed_at"`
+}
