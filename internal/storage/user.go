@@ -31,7 +31,7 @@ func (db *DB) UserCreate(ctx context.Context, login string, password string) err
 }
 
 func (db *DB) UserGet(ctx context.Context, login string) (string, error) { // pass, err
-	row := db.driver.QueryRowContext(ctx, "select password where login = $1", login)
+	row := db.driver.QueryRowContext(ctx, "select password from users where login = $1", login)
 
 	var pass string
 
