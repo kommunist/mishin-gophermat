@@ -10,25 +10,22 @@ import (
 	"github.com/lib/pq"
 )
 
-func (db *DB) OrderByNumberGet(ctx context.Context, number string) (map[string]any, error) {
-	var userLogin string
+func (db *DB) OrderByNumberGet(ctx context.Context, number string) (string, error) {
+	var orderLogin string
 
-	r := make(map[string]any)
 	row := db.driver.QueryRowContext(ctx, "SELECT user_login FROM orders where number = $1 limit 1", number)
-	err := row.Scan(&userLogin)
-
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
+	err := row.Scan(&orderLogin)
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil
+		}
+
 		slog.Info("error when scan data", "err", err)
-		return nil, err
+		return "", err
 	}
 
-	r["userLogin"] = userLogin
-
-	return r, nil
+	return orderLogin, nil
 }
 
 func (db *DB) OrdersGet(ctx context.Context, login string) ([]map[string]any, error) {
