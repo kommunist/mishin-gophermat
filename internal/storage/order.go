@@ -17,7 +17,7 @@ func (db *DB) OrderByNumberGet(ctx context.Context, number string) (string, erro
 	err := row.Scan(&orderLogin)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return "", nil
 		}
 
