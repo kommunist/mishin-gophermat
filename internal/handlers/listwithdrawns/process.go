@@ -6,15 +6,8 @@ import (
 	"net/http"
 )
 
-type responseItem struct {
-	Number      string  `json:"order"`
-	Value       float64 `json:"sum"`
-	ProcessedAt string  `json:"processed_at"`
-}
-
 func (h *ListWithdrawns) Process(w http.ResponseWriter, r *http.Request) {
 	var currUser string
-	resp := make([]responseItem, 0)
 
 	_, claims, _ := h.GetLogin(r.Context())
 	if userLogin := claims["login"]; userLogin != nil {
@@ -35,18 +28,8 @@ func (h *ListWithdrawns) Process(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	for _, v := range data {
-		resp = append(
-			resp,
-			responseItem{
-				Number:      v["number"].(string),
-				Value:       v["value"].(float64),
-				ProcessedAt: v["processedAt"].(string),
-			},
-		)
-	}
 
-	respBody, err := json.Marshal(resp)
+	respBody, err := json.Marshal(data)
 	if err != nil {
 		slog.Error("Error when generate json", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

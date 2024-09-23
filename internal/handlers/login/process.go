@@ -43,7 +43,7 @@ func (h *LoginHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	encrypted := auth.Encrypt(map[string]any{"login": rs.Login})
+	encrypted := auth.EncryptLogin(rs.Login)
 	newCookie := newAuthCookie(encrypted)
 	http.SetCookie(w, &newCookie)
 	w.Header().Set("Content-Type", "application/json")

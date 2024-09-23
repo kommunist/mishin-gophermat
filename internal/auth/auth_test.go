@@ -10,7 +10,7 @@ func TestEncrypt(t *testing.T) {
 	t.Run("encrypt_data", func(t *testing.T) {
 		InitAuth()
 
-		encrypted := Encrypt(map[string]any{"login": "marks"})
+		encrypted := EncryptLogin("marks")
 
 		assert.Equal(
 			t,

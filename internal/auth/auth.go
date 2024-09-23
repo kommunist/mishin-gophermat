@@ -10,11 +10,12 @@ func InitAuth() {
 	TokenAuth = jwtauth.New("HS256", []byte("secret"), nil) // пока просто слово secret
 }
 
-func Encrypt(data map[string]any) string {
+func EncryptLogin(login string) string {
 	if TokenAuth == nil {
 		InitAuth()
 	}
-	_, tokenString, _ := TokenAuth.Encode(data)
+
+	_, tokenString, _ := TokenAuth.Encode(map[string]interface{}{"login": login})
 
 	return tokenString
 }

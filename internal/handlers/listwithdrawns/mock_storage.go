@@ -6,6 +6,7 @@ package listwithdrawns
 
 import (
 	context "context"
+	models "mishin-gophermat/internal/models"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,10 +36,10 @@ func (m *MockWithdrawnsGetter) EXPECT() *MockWithdrawnsGetterMockRecorder {
 }
 
 // WithdrawnsGet mocks base method.
-func (m *MockWithdrawnsGetter) WithdrawnsGet(arg0 context.Context, arg1 string) ([]map[string]interface{}, error) {
+func (m *MockWithdrawnsGetter) WithdrawnsGet(arg0 context.Context, arg1 string) ([]models.Withdrawn, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WithdrawnsGet", arg0, arg1)
-	ret0, _ := ret[0].([]map[string]interface{})
+	ret0, _ := ret[0].([]models.Withdrawn)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
