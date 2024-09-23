@@ -32,7 +32,13 @@ func (h *RegistrationHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.DB.UserCreate(r.Context(), rs.Login, rs.Password)
+	hashedPass, err := h.hasher.PassHash(rs.Password)
+	if err != nil {
+		slog.Error("Error when hash password", "err", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
+	err = h.DB.UserCreate(r.Context(), rs.Login, hashedPass)
 
 	switch err.(type) { // понравился такой синтаксис проверки, так как можно в любой момент его расширять
 	case *exist.ExistError:

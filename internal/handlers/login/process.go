@@ -31,14 +31,13 @@ func (h *LoginHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ex, err := h.DB.UserGet(r.Context(), rs.Login, rs.Password)
-
+	hashed, err := h.DB.UserGet(r.Context(), rs.Login)
 	if err != nil {
-		slog.Error("Error select user", "err", err)
+		slog.Error("Error when select password of user", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 
-	if !ex {
+	if !h.checker.PassCheck(rs.Password, hashed) {
 		slog.Info("User not found")
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return

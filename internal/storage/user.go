@@ -30,19 +30,16 @@ func (db *DB) UserCreate(ctx context.Context, login string, password string) err
 	return nil
 }
 
-func (db *DB) UserGet(ctx context.Context, login string, password string) (bool, error) {
-	row := db.driver.QueryRowContext(ctx,
-		"select exists(select login from users where login = $1 and password = $2)", // наверное, не лучшая идея так логин/пароль впихивать
-		login, password,
-	)
+func (db *DB) UserGet(ctx context.Context, login string) (string, error) { // pass, err
+	row := db.driver.QueryRowContext(ctx, "select password from users where login = $1", login)
 
-	var ex bool
+	var pass string
 
-	err := row.Scan(&ex)
+	err := row.Scan(&pass)
 	if err != nil {
 		slog.Error("Error when scan data", "err", err)
-		return false, err
+		return "", err
 	}
 
-	return ex, nil
+	return pass, nil
 }

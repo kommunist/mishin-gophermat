@@ -2,16 +2,25 @@ package login
 
 import (
 	"context"
+	"mishin-gophermat/internal/auth"
 )
 
 type UserGetter interface {
-	UserGet(ctx context.Context, login string, password string) (bool, error) // login, error
+	UserGet(ctx context.Context, login string) (string, error) // pass, error
+}
+
+type PassChecker interface {
+	PassCheck(pass string, hashed string) bool
 }
 
 type LoginHandler struct {
-	DB UserGetter
+	DB      UserGetter
+	checker PassChecker
 }
 
 func InitHandler(db UserGetter) LoginHandler {
-	return LoginHandler{DB: db}
+	return LoginHandler{
+		DB:      db,
+		checker: &auth.Crypt{},
+	}
 }
