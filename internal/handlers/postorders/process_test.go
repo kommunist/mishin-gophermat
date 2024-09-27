@@ -3,18 +3,14 @@ package postorders
 import (
 	"bytes"
 	"context"
+	"mishin-gophermat/internal/secure"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/lestrrat-go/jwx/v2/jwt"
 	"github.com/stretchr/testify/assert"
 )
-
-func GetLoginLenin(ctx context.Context) (jwt.Token, map[string]any, error) {
-	return nil, map[string]any{"login": "lenin"}, nil
-}
 
 func TestProcess(t *testing.T) {
 
@@ -26,10 +22,9 @@ func TestProcess(t *testing.T) {
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
-		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
-		ctx := context.Background()
+		ctx := context.WithValue(context.Background(), secure.UserLoginKey, "lenin")
 		request :=
 			httptest.NewRequest(
 				http.MethodPost,
@@ -49,7 +44,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusAccepted, res.StatusCode, "response status must be 202") // 202
+		assert.Equal(t, http.StatusAccepted, res.StatusCode, "response status must be 202")
 	})
 
 	t.Run("already_exist_order_with_same_author_200", func(t *testing.T) {
@@ -59,10 +54,9 @@ func TestProcess(t *testing.T) {
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
-		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
-		ctx := context.Background()
+		ctx := context.WithValue(context.Background(), secure.UserLoginKey, "lenin")
 		request :=
 			httptest.NewRequest(
 				http.MethodPost,
@@ -80,7 +74,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200") // 200
+		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200")
 	})
 
 	t.Run("already_exist_order_with_another_author_409", func(t *testing.T) {
@@ -90,10 +84,9 @@ func TestProcess(t *testing.T) {
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
-		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
-		ctx := context.Background()
+		ctx := context.WithValue(context.Background(), secure.UserLoginKey, "lenin")
 		request :=
 			httptest.NewRequest(
 				http.MethodPost,
@@ -111,7 +104,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusConflict, res.StatusCode, "response status must be 409") // 409
+		assert.Equal(t, http.StatusConflict, res.StatusCode, "response status must be 409")
 	})
 
 	t.Run("invalid_data_in_input_422", func(t *testing.T) {
@@ -122,10 +115,9 @@ func TestProcess(t *testing.T) {
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
-		h.GetLogin = GetLoginLenin
 
 		//готовим запрос
-		ctx := context.Background()
+		ctx := context.WithValue(context.Background(), secure.UserLoginKey, "lenin")
 		request :=
 			httptest.NewRequest(
 				http.MethodPost,
@@ -145,10 +137,10 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode, "response status must be 422") // 422
+		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode, "response status must be 422")
 	})
 
-	t.Run("unauthorize_401", func(t *testing.T) {
+	t.Run("when_without_login_in_context_500", func(t *testing.T) {
 		acrChan := make(chan string, 5)
 
 		// создали стор
@@ -156,7 +148,6 @@ func TestProcess(t *testing.T) {
 
 		// заинитили хендлер
 		h := InitHandler(stor, acrChan)
-		// h.GetLogin = GetLoginLenin - специально выключено, чтобы было видно, что не авторизовываем
 
 		//готовим запрос
 		ctx := context.Background()
@@ -179,7 +170,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
+		assert.Equal(t, http.StatusInternalServerError, res.StatusCode, "response status must be 500")
 	})
 
 }

@@ -1,8 +1,8 @@
 package app
 
 import (
-	"mishin-gophermat/internal/auth"
 	"mishin-gophermat/internal/config"
+	"mishin-gophermat/internal/secure"
 	"mishin-gophermat/internal/storage"
 )
 
@@ -13,7 +13,7 @@ type App struct {
 }
 
 func InitApp() App {
-	auth.InitAuth()
+	secure.InitSecure()
 
 	c := config.MakeConfig()
 	c.InitConfig()

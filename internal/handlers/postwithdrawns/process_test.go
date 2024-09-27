@@ -4,18 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"mishin-gophermat/internal/secure"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/lestrrat-go/jwx/v2/jwt"
 	"github.com/likexian/gokit/assert"
 )
-
-func GetLoginLenin(ctx context.Context) (jwt.Token, map[string]any, error) {
-	return nil, map[string]any{"login": "lenin"}, nil
-}
 
 func TestProcess(t *testing.T) {
 	t.Run("create_withdrawn_when_balance_is_high_200", func(t *testing.T) {
@@ -25,12 +21,11 @@ func TestProcess(t *testing.T) {
 
 		// инитим хендлер
 		h := InitHandler(stor)
-		h.GetLogin = GetLoginLenin
 
 		data, _ := json.Marshal(request{Number: "new_number", Value: 123})
 
 		// готовим запрос
-		ctx := context.Background()
+		ctx := context.WithValue(context.Background(), secure.UserLoginKey, "lenin")
 		request :=
 			httptest.NewRequest(http.MethodPost, "/api/user/orders", bytes.NewReader(data)).WithContext(ctx)
 
@@ -45,7 +40,7 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200") // 200
+		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200")
 	})
 
 	t.Run("create_withdrawn_when_balance_is_low_402", func(t *testing.T) {
@@ -55,12 +50,11 @@ func TestProcess(t *testing.T) {
 
 		// инитим хендлер
 		h := InitHandler(stor)
-		h.GetLogin = GetLoginLenin
 
 		data, _ := json.Marshal(request{Number: "new_number", Value: 123})
 
 		// готовим запрос
-		ctx := context.Background()
+		ctx := context.WithValue(context.Background(), secure.UserLoginKey, "lenin")
 		request :=
 			httptest.NewRequest(http.MethodPost, "/api/user/orders", bytes.NewReader(data)).WithContext(ctx)
 
@@ -75,17 +69,16 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusPaymentRequired, res.StatusCode, "response status must be 402") // 402
+		assert.Equal(t, http.StatusPaymentRequired, res.StatusCode, "response status must be 402")
 	})
 
-	t.Run("when_user_not_authorized", func(t *testing.T) {
+	t.Run("when_without_login_in_context_500", func(t *testing.T) {
 
 		// создали стор
 		stor := NewMockWithdrawnCreator(gomock.NewController(t))
 
 		// инитим хендлер
 		h := InitHandler(stor)
-		// h.GetLogin = GetLoginLenin // специально выключено
 
 		data, _ := json.Marshal(request{Number: "new_number", Value: 123})
 
@@ -105,6 +98,6 @@ func TestProcess(t *testing.T) {
 		defer res.Body.Close()
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
+		assert.Equal(t, http.StatusInternalServerError, res.StatusCode, "response status must be 500")
 	})
 }

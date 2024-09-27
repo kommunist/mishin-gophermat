@@ -3,19 +3,18 @@ package listorders
 import (
 	"encoding/json"
 	"log/slog"
+	"mishin-gophermat/internal/secure"
 	"net/http"
 )
 
 func (h *ListOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
-	var currUser string
-
-	_, claims, _ := h.GetLogin(r.Context())
-	if userLogin := claims["login"]; userLogin != nil {
-		currUser = claims["login"].(string)
-	} else { // 401
-		w.WriteHeader(http.StatusUnauthorized)
+	getLogin := r.Context().Value(secure.UserLoginKey)
+	if getLogin == nil {
+		slog.Error("Error when get current user from context")
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+	currUser := getLogin.(string)
 
 	data, err := h.DB.OrdersGet(r.Context(), currUser)
 	if err != nil { // 204

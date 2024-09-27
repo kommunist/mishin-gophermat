@@ -2,7 +2,7 @@ package login
 
 import (
 	"context"
-	"mishin-gophermat/internal/auth"
+	"mishin-gophermat/internal/secure"
 )
 
 type UserGetter interface {
@@ -21,6 +21,6 @@ type LoginHandler struct {
 func InitHandler(db UserGetter) LoginHandler {
 	return LoginHandler{
 		DB:      db,
-		checker: &auth.Crypt{},
+		checker: &secure.Crypt{},
 	}
 }

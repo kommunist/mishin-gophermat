@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
-	"mishin-gophermat/internal/auth"
 	"mishin-gophermat/internal/errors/exist"
+	"mishin-gophermat/internal/secure"
 	"net/http"
 )
 
@@ -51,7 +51,7 @@ func (h *RegistrationHandler) Process(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 
-	encrypted := auth.EncryptLogin(rs.Login)
+	encrypted := secure.EncryptLogin(rs.Login)
 	newCookie := newAuthCookie(encrypted)
 	http.SetCookie(w, &newCookie)
 	w.Header().Set("Content-Type", "application/json")
