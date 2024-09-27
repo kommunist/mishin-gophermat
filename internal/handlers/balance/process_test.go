@@ -47,33 +47,32 @@ func TestProcess(t *testing.T) {
 		assert.Equal(t, 60.0, resp.Withdrawn, "current size of withdrawns must be eq to result from db")
 
 		// Проверяем статус ответа
-		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200") // 200
+		assert.Equal(t, http.StatusOK, res.StatusCode, "response status must be 200")
 	})
 
-	// t.Run("when_without_authorize_401", func(t *testing.T) {
+	t.Run("when_without_login_in_context_500", func(t *testing.T) {
 
-	// 	// создали стор
-	// 	stor := NewMockBalanceGetter(gomock.NewController(t))
+		// создали стор
+		stor := NewMockBalanceGetter(gomock.NewController(t))
 
-	// 	// заинитили хендлер
-	// 	h := InitHandler(stor)
-	// 	// h.GetLogin = GetLoginLenin
+		// заинитили хендлер
+		h := InitHandler(stor)
 
-	// 	//готовим запрос
-	// 	ctx := context.Background()
-	// 	request :=
-	// 		httptest.NewRequest(http.MethodGet, "/api/user/balance", nil).WithContext(ctx)
+		//готовим запрос
+		ctx := context.Background()
+		request :=
+			httptest.NewRequest(http.MethodGet, "/api/user/balance", nil).WithContext(ctx)
 
-	// 	// ожидаем, что в базу будет такой поход для поиска
-	// 	stor.EXPECT().BalanceGet(ctx, "lenin").Times(0)
+		// ожидаем, что в базу будет такой поход для поиска
+		stor.EXPECT().BalanceGet(ctx, "lenin").Times(0)
 
-	// 	// Делаем запрос
-	// 	w := httptest.NewRecorder()
-	// 	h.Process(w, request)
-	// 	res := w.Result()
-	// 	defer res.Body.Close()
+		// Делаем запрос
+		w := httptest.NewRecorder()
+		h.Process(w, request)
+		res := w.Result()
+		defer res.Body.Close()
 
-	// 	// Проверяем статус ответа
-	// 	assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
-	// })
+		// Проверяем статус ответа
+		assert.Equal(t, http.StatusInternalServerError, res.StatusCode, "response status must be 500")
+	})
 }

@@ -8,12 +8,13 @@ import (
 )
 
 func (h *ListWithdrawns) Process(w http.ResponseWriter, r *http.Request) {
-	currUser := r.Context().Value(secure.UserLoginKey).(string)
-	if currUser == "" {
+	getLogin := r.Context().Value(secure.UserLoginKey)
+	if getLogin == nil {
 		slog.Error("Error when get current user from context")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+	currUser := getLogin.(string)
 
 	data, err := h.DB.WithdrawnsGet(r.Context(), currUser)
 	if err != nil {

@@ -9,12 +9,13 @@ import (
 )
 
 func (h *PostOrdersHandler) Process(w http.ResponseWriter, r *http.Request) {
-	currUser := r.Context().Value(secure.UserLoginKey).(string)
-	if currUser == "" {
+	getLogin := r.Context().Value(secure.UserLoginKey)
+	if getLogin == nil {
 		slog.Error("Error when get current user from context")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+	currUser := getLogin.(string)
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil { // если body не читается
