@@ -2,7 +2,7 @@ package registration
 
 import (
 	"context"
-	"mishin-gophermat/internal/auth"
+	"mishin-gophermat/internal/secure"
 )
 
 type UserCreator interface {
@@ -21,6 +21,6 @@ type RegistrationHandler struct {
 func InitHandler(db UserCreator) RegistrationHandler {
 	return RegistrationHandler{
 		DB:     db,
-		hasher: &auth.Crypt{},
+		hasher: &secure.Crypt{},
 	}
 }

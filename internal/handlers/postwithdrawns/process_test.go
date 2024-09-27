@@ -4,18 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"mishin-gophermat/internal/secure"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/lestrrat-go/jwx/v2/jwt"
 	"github.com/likexian/gokit/assert"
 )
-
-func GetLoginLenin(ctx context.Context) (jwt.Token, map[string]any, error) {
-	return nil, map[string]any{"login": "lenin"}, nil
-}
 
 func TestProcess(t *testing.T) {
 	t.Run("create_withdrawn_when_balance_is_high_200", func(t *testing.T) {
@@ -25,12 +21,11 @@ func TestProcess(t *testing.T) {
 
 		// инитим хендлер
 		h := InitHandler(stor)
-		h.GetLogin = GetLoginLenin
 
 		data, _ := json.Marshal(request{Number: "new_number", Value: 123})
 
 		// готовим запрос
-		ctx := context.Background()
+		ctx := context.WithValue(context.Background(), secure.UserLoginKey, "lenin")
 		request :=
 			httptest.NewRequest(http.MethodPost, "/api/user/orders", bytes.NewReader(data)).WithContext(ctx)
 
@@ -55,12 +50,11 @@ func TestProcess(t *testing.T) {
 
 		// инитим хендлер
 		h := InitHandler(stor)
-		h.GetLogin = GetLoginLenin
 
 		data, _ := json.Marshal(request{Number: "new_number", Value: 123})
 
 		// готовим запрос
-		ctx := context.Background()
+		ctx := context.WithValue(context.Background(), secure.UserLoginKey, "lenin")
 		request :=
 			httptest.NewRequest(http.MethodPost, "/api/user/orders", bytes.NewReader(data)).WithContext(ctx)
 
@@ -78,33 +72,33 @@ func TestProcess(t *testing.T) {
 		assert.Equal(t, http.StatusPaymentRequired, res.StatusCode, "response status must be 402") // 402
 	})
 
-	t.Run("when_user_not_authorized", func(t *testing.T) {
+	// t.Run("when_user_not_authorized", func(t *testing.T) {
 
-		// создали стор
-		stor := NewMockWithdrawnCreator(gomock.NewController(t))
+	// 	// создали стор
+	// 	stor := NewMockWithdrawnCreator(gomock.NewController(t))
 
-		// инитим хендлер
-		h := InitHandler(stor)
-		// h.GetLogin = GetLoginLenin // специально выключено
+	// 	// инитим хендлер
+	// 	h := InitHandler(stor)
+	// 	// h.GetLogin = GetLoginLenin // специально выключено
 
-		data, _ := json.Marshal(request{Number: "new_number", Value: 123})
+	// 	data, _ := json.Marshal(request{Number: "new_number", Value: 123})
 
-		// готовим запрос
-		ctx := context.Background()
-		request :=
-			httptest.NewRequest(http.MethodPost, "/api/user/orders", bytes.NewReader(data)).WithContext(ctx)
+	// 	// готовим запрос
+	// 	ctx := context.Background()
+	// 	request :=
+	// 		httptest.NewRequest(http.MethodPost, "/api/user/orders", bytes.NewReader(data)).WithContext(ctx)
 
-		// ожидаем, что в базу будет такой поход для баланса
-		stor.EXPECT().BalanceGet(ctx, "lenin").Times(0)
-		// ожидаем, что в базе будет создан заказ
-		stor.EXPECT().WithdrawnCreate(ctx, "lenin", "new_number", 123).Times(0)
+	// 	// ожидаем, что в базу будет такой поход для баланса
+	// 	stor.EXPECT().BalanceGet(ctx, "lenin").Times(0)
+	// 	// ожидаем, что в базе будет создан заказ
+	// 	stor.EXPECT().WithdrawnCreate(ctx, "lenin", "new_number", 123).Times(0)
 
-		w := httptest.NewRecorder()
-		h.Process(w, request)
-		res := w.Result()
-		defer res.Body.Close()
+	// 	w := httptest.NewRecorder()
+	// 	h.Process(w, request)
+	// 	res := w.Result()
+	// 	defer res.Body.Close()
 
-		// Проверяем статус ответа
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
-	})
+	// 	// Проверяем статус ответа
+	// 	assert.Equal(t, http.StatusUnauthorized, res.StatusCode, "response status must be 401") // 401
+	// })
 }

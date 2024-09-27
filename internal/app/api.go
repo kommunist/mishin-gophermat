@@ -2,7 +2,6 @@ package app
 
 import (
 	"log/slog"
-	"mishin-gophermat/internal/auth"
 	"mishin-gophermat/internal/handlers/balance"
 	"mishin-gophermat/internal/handlers/listorders"
 	"mishin-gophermat/internal/handlers/listwithdrawns"
@@ -10,6 +9,8 @@ import (
 	"mishin-gophermat/internal/handlers/postorders"
 	"mishin-gophermat/internal/handlers/postwithdrawns"
 	"mishin-gophermat/internal/handlers/registration"
+	"mishin-gophermat/internal/middlewares/auth"
+	"mishin-gophermat/internal/secure"
 	"net/http"
 	"os"
 
@@ -25,12 +26,14 @@ func (app *App) StartAPI() {
 	pwithdrawns := postwithdrawns.InitHandler(app.DB)
 	lwithdrawns := listwithdrawns.InitHandler(app.DB)
 	loginH := login.InitHandler(app.DB)
+	authM := auth.InitAuth()
 
 	r := chi.NewRouter()
 
 	r.Group(func(r chi.Router) {
-		r.Use(jwtauth.Verifier(auth.TokenAuth))
-		r.Use(jwtauth.Authenticator(auth.TokenAuth))
+		r.Use(jwtauth.Verifier(secure.TokenAuth))
+		r.Use(jwtauth.Authenticator(secure.TokenAuth))
+		r.Use(authM.Auth)
 		r.Post("/api/user/orders", poH.Process)
 		r.Get("/api/user/orders", loH.Process)
 		r.Get("/api/user/balance", balH.Process)

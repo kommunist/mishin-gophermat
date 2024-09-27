@@ -1,4 +1,4 @@
-package auth
+package secure
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 
 func TestEncrypt(t *testing.T) {
 	t.Run("encrypt_data", func(t *testing.T) {
-		InitAuth()
+		InitSecure()
 
 		encrypted := EncryptLogin("marks")
 

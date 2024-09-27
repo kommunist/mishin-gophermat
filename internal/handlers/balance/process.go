@@ -3,6 +3,7 @@ package balance
 import (
 	"encoding/json"
 	"log/slog"
+	"mishin-gophermat/internal/secure"
 	"net/http"
 )
 
@@ -12,13 +13,10 @@ type response struct {
 }
 
 func (h *BalanceHandler) Process(w http.ResponseWriter, r *http.Request) {
-	var currUser string
-
-	_, claims, _ := h.GetLogin(r.Context())
-	if userLogin := claims["login"]; userLogin != nil {
-		currUser = claims["login"].(string)
-	} else { // 401
-		w.WriteHeader(http.StatusUnauthorized)
+	currUser := r.Context().Value(secure.UserLoginKey).(string)
+	if currUser == "" {
+		slog.Error("Error when get current user from context")
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
