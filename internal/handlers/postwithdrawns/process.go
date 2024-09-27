@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"mishin-gophermat/internal/luhn"
 	"mishin-gophermat/internal/secure"
 	"net/http"
 )
@@ -12,8 +13,6 @@ type request struct {
 	Number string  `json:"order"`
 	Value  float64 `json:"sum"`
 }
-
-// не стал реализовывать кейс с неправильным номером заказа
 
 func (h *PostWithdrawsHandler) Process(w http.ResponseWriter, r *http.Request) {
 	getLogin := r.Context().Value(secure.UserLoginKey)
@@ -37,6 +36,12 @@ func (h *PostWithdrawsHandler) Process(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("Error when parse json", "err", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	valid, err := luhn.Valid([]byte(req.Number))
+	if err != nil || !valid { // Если не удалось проверить на подлинность, то 422
+		slog.Error("Error when valid body", "err", err)
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
