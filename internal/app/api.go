@@ -12,15 +12,21 @@ import (
 	"mishin-gophermat/internal/middlewares/auth"
 	"mishin-gophermat/internal/secure"
 	"net/http"
-	"os"
 
 	chi "github.com/go-chi/chi/v5"
 	jwtauth "github.com/go-chi/jwtauth/v5"
 )
 
-func (app *App) StartAPI() {
+func (a *App) InitServer(h http.Handler) {
+	a.srv = &http.Server{
+		Addr:    a.Config.RunAddress,
+		Handler: h,
+	}
+}
+
+func (app *App) CollectHandlers() http.Handler {
 	regH := registration.InitHandler(app.DB)
-	poH := postorders.InitHandler(app.DB, app.AcrChan)
+	poH := postorders.InitHandler(app.DB, app.Acr.AcrChan)
 	loH := listorders.InitHandler(app.DB)
 	balH := balance.InitHandler(app.DB)
 	pwithdrawns := postwithdrawns.InitHandler(app.DB)
@@ -44,10 +50,21 @@ func (app *App) StartAPI() {
 	r.Post("/api/user/register", regH.Process)
 	r.Post("/api/user/login", loginH.Process)
 
+	return r
+}
+
+func (app *App) StartAPI() {
+	app.InitServer(
+		app.CollectHandlers(),
+	)
+
 	slog.Info("Start server on")
-	err := http.ListenAndServe(app.Config.RunAddress, r)
+
+	err := app.srv.ListenAndServe()
+
 	if err != nil {
 		slog.Error("Server failed to start", "err", err)
-		os.Exit(1)
+		app.Finish(true)
 	}
+
 }

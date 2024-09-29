@@ -6,13 +6,9 @@ import (
 	"time"
 )
 
-func (acr *Accrual) InitWorkers(inp chan string) {
-	for i := 1; i < 5; i++ { // пусть будет 5 рутин для начала
-		go acr.slave(inp)
-	}
-}
-
 func (acr *Accrual) slave(inp chan string) {
+	defer acr.wg.Done()
+
 	for num := range inp {
 		repeat, err := acr.process(num)
 		if err != nil {
