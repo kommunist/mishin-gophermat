@@ -6,37 +6,34 @@ import (
 )
 
 func (db *DB) BalanceGet(ctx context.Context, login string) (float64, float64, error) { // current, withdrawn
-	var checkDebit any
+	var checkBalance any
 	var checkCredit any
-	var debit float64
+	var balance float64
 	var credit float64
 
 	row := db.driver.QueryRowContext(
 		ctx,
-		"SELECT sum(orders.value) FROM orders WHERE user_login = $1", login,
+		`
+		select sum(balance), sum(withdrawns) from (
+	    	select (value * -1) as balance, value as withdrawns from withdrawns where user_login = $1
+    		union all
+    		select value as balance, 0 as withdrawns from orders where user_login = $1
+		)
+		`, login,
 	)
-	err := row.Scan(&checkDebit)
-	if checkDebit != nil {
-		debit = checkDebit.(float64)
-	}
+
+	err := row.Scan(&checkBalance, &checkCredit)
+
 	if err != nil {
-		slog.Info("error when scan data for debit", "err", err)
+		slog.Info("error when scan data for balance", "err", err)
 		return 0.0, 0.0, err
 	}
 
-	row = db.driver.QueryRowContext(
-		ctx,
-		"SELECT sum(withdrawns.value) FROM withdrawns WHERE user_login = $1", login,
-	)
-	err = row.Scan(&checkCredit)
+	if checkBalance != nil {
+		balance = checkBalance.(float64)
+	}
 	if checkCredit != nil {
 		credit = checkCredit.(float64)
 	}
-	if err != nil {
-		slog.Info("error when scan data for credit", "err", err)
-		return 0.0, 0.0, err
-	}
-	slog.Info("data", "debit", debit, "credit", credit)
-
-	return debit - credit, credit, nil
+	return balance, credit, nil
 }
