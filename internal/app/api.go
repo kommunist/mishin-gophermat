@@ -17,9 +17,9 @@ import (
 	jwtauth "github.com/go-chi/jwtauth/v5"
 )
 
-func (a *App) InitServer(h http.Handler) {
-	a.srv = &http.Server{
-		Addr:    a.Config.RunAddress,
+func (app *App) InitServer(h http.Handler) {
+	app.srv = &http.Server{
+		Addr:    app.Config.RunAddress,
 		Handler: h,
 	}
 }
