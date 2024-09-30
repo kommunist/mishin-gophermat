@@ -10,24 +10,28 @@ type OrderUpdater interface {
 }
 
 type Accrual struct {
-	DB      OrderUpdater
-	URI     string
-	wg      sync.WaitGroup
-	AcrChan chan string // канал для общения с воркерами
+	DB       OrderUpdater
+	URI      string
+	wg       sync.WaitGroup
+	AcrChan  chan string // канал для общения с воркерами
+	Count    int
+	waitChan chan int // канал для ожидания
 }
 
 func InitAccrual(db OrderUpdater, URI string) Accrual {
 	return Accrual{
-		DB:      db,
-		URI:     URI,
-		AcrChan: make(chan string, 5),
+		DB:       db,
+		URI:      URI,
+		AcrChan:  make(chan string, 5),
+		Count:    5, // пока пусть будет 5 воркеров
+		waitChan: make(chan int, 5),
 	}
 }
 
 func (acr *Accrual) InitWorkers() {
 	acr.wg.Add(5)
-	for i := 1; i < 5; i++ { // пусть будет 5 рутин для начала
-		go acr.slave(acr.AcrChan)
+	for i := 0; i < acr.Count; i++ {
+		go acr.slave()
 	}
 }
 
