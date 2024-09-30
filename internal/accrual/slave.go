@@ -6,41 +6,46 @@ import (
 	"time"
 )
 
-func (acr *Accrual) slave(inp chan string) {
+func (acr *Accrual) slave() {
 	defer acr.wg.Done()
+	closed := false
 
-	for num := range inp {
-		repeat := acr.process(num)
-		if repeat {
-			time.Sleep(5 * time.Second) // маленько подождем, чтобы не перегружать
-			inp <- num                  // положим обратно
+	for !closed {
+		select {
+		case num, ok := <-acr.AcrChan:
+			if ok {
+				acr.process(num)
+			}
+			closed = !ok
+		case wait := <-acr.waitChan:
+			time.Sleep(time.Duration(wait) * time.Second)
 		}
 	}
 }
 
-// - `REGISTERED` — заказ зарегистрирован, но не начисление не рассчитано;
-// - `INVALID` — заказ не принят к расчёту, и вознаграждение не будет начислено;
-// - `PROCESSING` — расчёт начисления в процессе;
-// - `PROCESSED` — расчёт начисления окончен;
-func (acr *Accrual) process(number string) bool { // repeat?(true/false)
-	status, accrual, err := acr.getOrderData(number)
+func (acr *Accrual) process(number string) {
+	status, accrual, wait, err := acr.getOrderData(number)
 	if err != nil {
 		slog.Error("Error when get data from accrual", "err", err)
-		return false // будем считать, что достаточно того, что написали в логи
+		acr.AcrChan <- number // будем прокручивать, чтобы не потерять
+		return
+	}
+
+	if wait != 0 {
+		for i := 0; i < acr.Count; i++ {
+			acr.waitChan <- wait
+		}
 	}
 
 	if status != "INVALID" && status != "PROCESSED" {
-		// попробовать снова
-		return true
+		acr.AcrChan <- number // попробовать снова
+		return
 	}
-
-	slog.Info("Try to update order", "number", number, "value", accrual, "status", status)
 
 	err = acr.DB.OrderUpdate(context.Background(), number, status, accrual)
 	if err != nil {
 		slog.Error("Error when update order in db", "err", err)
-		return false // будем считать, что достаточно того, что написали в логи. Возможно надо уходить на нвоый круг
+		acr.AcrChan <- number // будем прокручивать, чтобы не потерять
+		return
 	}
-
-	return false
 }
