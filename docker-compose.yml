@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16.4
+    environment:
+      POSTGRES_DB: "gophermart"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5435:5432"
+  gophermart:
+    image: golang:1.22-bookworm
+    depends_on:
+      - postgres
+    environment: 
+      DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/gophermart?sslmode=disable"
+
+      GOOSE_DRIVER: "postgres"
+      GOOSE_DBSTRING: "postgresql://postgres:postgres@postgres:5432/gophermart"
+      GOOSE_MIGRATION_DIR: "internal/storage/migrations"
+
+    ports:
+      - "8085:8080"
+    command: "go run /go/src/gophermart/cmd/gophermart/main.go"
+    volumes:
+      - ~/go/bin:/go/bin
+      - .:/go/src/gophermart
+    working_dir: "/go/src/gophermart"
+  accrual:
+    image: ubuntu:20.04
+    # depends_on:
+    #   - postgres
+    environment:
+      RUN_ADDRESS: "0.0.0.0:8080"
+      DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/accrual?sslmode=disable"
+    ports:
+      - "8086:8080"
+    volumes:
+      - .:/go/src/gophermart
+    command: "/go/src/gophermart/cmd/accrual/accrual_linux_amd64"
